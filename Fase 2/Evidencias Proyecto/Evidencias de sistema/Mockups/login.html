@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRM Flota PepsiCo - Login</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #004B93 0%, #002D62 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .login-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 420px;
+            overflow: hidden;
+        }
+        
+        .login-header {
+            background: #004B93;
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+        }
+        
+        .login-header h1 {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+        
+        .login-header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .login-form {
+            padding: 30px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+        }
+        
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 15px;
+            transition: border-color 0.3s;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: #004B93;
+            outline: none;
+        }
+        
+        .btn-login {
+            width: 100%;
+            background: #004B93;
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-top: 10px;
+        }
+        
+        .btn-login:hover {
+            background: #003366;
+        }
+        
+        .login-footer {
+            text-align: center;
+            padding: 20px;
+            border-top: 1px solid #eee;
+            font-size: 13px;
+            color: #666;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="login-container">
+        <div class="login-header">
+            <h1>CRM Flota PepsiCo</h1>
+            <p>Sistema de Gestión de Talleres</p>
+        </div>
+
+        <form class="login-form">
+            <div class="form-group">
+                <label for="username">Usuario</label>
+                <input type="text" id="username" placeholder="Ingrese su usuario">
+            </div>
+
+            <div class="form-group">
+                <label for="password">Contraseña</label>
+                <input type="password" id="password" placeholder="Ingrese su contraseña">
+            </div>
+
+            <div class="form-group">
+                <label for="role">Perfil de acceso</label>
+                <select id="role">
+                    <option value="">Seleccione su perfil</option>
+                    <option value="jefe_taller">Jefe de Taller</option>
+                    <option value="mecanico">Mecánico</option>
+                    <option value="chofer">Chofer</option>
+                    <option value="supervisor">Supervisor</option>                    
+                    <option value="admin">Administrativo</option>
+                    <option value="coordinador">Coordinador</option>
+                </select>
+            </div>
+
+            <button type="button" class="btn-login" onclick="login()">Ingresar al Sistema</button>
+        </form>
+
+        <div class="login-footer">
+            Versión 1.0 · PepsiCo Chile
+        </div>
+    </div>
+
+    <script>
+        function login() {
+            const role = document.getElementById('role').value;
+            if (role) {
+                window.location.href = `${role}_dashboard.html`;
+            } else {
+                alert('Por favor seleccione un perfil de acceso');
+            }
+        }
+    </script>
+</body>
+
+</html>
