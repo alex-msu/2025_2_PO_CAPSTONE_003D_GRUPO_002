@@ -1,0 +1,9 @@
+{
+  "name": "crm-worker-placeholder",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "worker:dev": "ts-node-dev --respawn --transpile-only src/worker.ts"
+  }
+}
