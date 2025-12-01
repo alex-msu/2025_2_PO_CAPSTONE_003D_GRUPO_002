@@ -1732,24 +1732,52 @@ if (socket) {
     socket.on('solicitud:refresh', function () {
         console.log('Evento solicitud:refresh recibido en jefe de taller, refrescando solicitudes...');
         solReload();
-        // También recargar verificaciones ya que pueden haber cambios en OTs
-        verificacionesReload();
+        // Actualizar contador de verificaciones inmediatamente (sin importar en qué tab esté)
+        updateVerificacionesPendNavLabel().then(function () {
+            console.log('[Socket.IO] Contador de verificaciones actualizado');
+        }).catch(function (err) {
+            console.error('[Socket.IO] Error actualizando contador de verificaciones:', err);
+        });
+        // Si estamos en la pestaña de verificaciones, recargar la tabla completa
+        var verificacionesTab = document.getElementById('tab-verificaciones');
+        if (verificacionesTab && verificacionesTab.classList.contains('active')) {
+            console.log('[Socket.IO] Recargando tabla de verificaciones (tab activa)');
+            verificacionesReload();
+        }
     });
     socket.on('reception:refresh', function () {
         console.log('Evento reception:refresh recibido en jefe de taller');
         // Refrescar también las solicitudes ya que pueden incluir OTs con discrepancia
         solReload();
-        // También recargar verificaciones ya que pueden haber cambios en OTs
-        verificacionesReload();
+        // Actualizar contador de verificaciones inmediatamente
+        updateVerificacionesPendNavLabel().then(function () {
+            console.log('[Socket.IO] Contador de verificaciones actualizado');
+        }).catch(function (err) {
+            console.error('[Socket.IO] Error actualizando contador de verificaciones:', err);
+        });
+        // Si estamos en la pestaña de verificaciones, recargar la tabla completa
+        var verificacionesTab = document.getElementById('tab-verificaciones');
+        if (verificacionesTab && verificacionesTab.classList.contains('active')) {
+            verificacionesReload();
+        }
     });
     socket.on('jefe-taller:notification', function (data) {
         console.log('Notificación recibida para jefe de taller:', data);
 
         // NotificationsManager manejará la notificación si está inicializado
         // Aquí solo manejamos actualizaciones de UI adicionales
-        // Recargar verificaciones si hay un otId (OT cerrada o aprobada)
+        // Actualizar contador de verificaciones si hay un otId (OT cerrada o aprobada)
         if (data.otId) {
-            verificacionesReload();
+            updateVerificacionesPendNavLabel().then(function () {
+                console.log('[Socket.IO] Contador de verificaciones actualizado (notificación)');
+            }).catch(function (err) {
+                console.error('[Socket.IO] Error actualizando contador de verificaciones:', err);
+            });
+            // Si estamos en la pestaña de verificaciones, recargar la tabla completa
+            var verificacionesTab = document.getElementById('tab-verificaciones');
+            if (verificacionesTab && verificacionesTab.classList.contains('active')) {
+                verificacionesReload();
+            }
         }
         // También recargar solicitudes
         solReload();
@@ -1758,6 +1786,12 @@ if (socket) {
     // Escuchar eventos de órdenes de trabajo para actualizar VehiclesViewer
     socket.on('workorders:refresh', function () {
         console.log('[Jefe Taller] Evento workorders:refresh recibido - recargando VehiclesViewer...');
+        // Actualizar contador de verificaciones inmediatamente (sin importar en qué tab esté)
+        updateVerificacionesPendNavLabel().then(function () {
+            console.log('[Socket.IO] Contador de verificaciones actualizado (workorders:refresh)');
+        }).catch(function (err) {
+            console.error('[Socket.IO] Error actualizando contador de verificaciones:', err);
+        });
         // Recargar VehiclesViewer manualmente como fallback
         if (window.vehiclesViewerJefe && typeof window.vehiclesViewerJefe.load === 'function') {
             window.vehiclesViewerJefe.load();
@@ -1765,6 +1799,11 @@ if (socket) {
         // También recargar lista de OTs
         if (typeof otReload === 'function') {
             otReload();
+        }
+        // Si estamos en la pestaña de verificaciones, recargar la tabla completa
+        var verificacionesTab = document.getElementById('tab-verificaciones');
+        if (verificacionesTab && verificacionesTab.classList.contains('active')) {
+            verificacionesReload();
         }
     });
 }
@@ -2975,6 +3014,11 @@ function loadDashboardStats() {
         }
 
         solReload();
+
+        // Actualizar contador de verificaciones pendientes al inicializar
+        if (typeof updateVerificacionesPendNavLabel === 'function') {
+            updateVerificacionesPendNavLabel();
+        }
 
         // Cargar mecánicos para que el modal/tab tenga datos disponibles
         mecReload();
@@ -4569,6 +4613,33 @@ window.stockJefeReload = async function () {
 
 // ========== VERIFICACIONES PENDIENTES ==========
 let verificacionesCache = [];
+
+// Función para actualizar solo el contador del nav (sin recargar la tabla)
+async function updateVerificacionesPendNavLabel() {
+    try {
+        const res = await bearerFetch(API_BASE + '/workorders');
+        if (!res.ok) return;
+        
+        const allOTs = await res.json();
+        // Filtrar solo OTs en PENDIENTE_VERIFICACION
+        const verificaciones = allOTs.filter(function (ot) {
+            return ot.estado === 'PENDIENTE_VERIFICACION';
+        });
+        
+        const navLabel = document.getElementById('verificacionesPendNavLabel');
+        if (navLabel) {
+            if (verificaciones.length > 0) {
+                navLabel.textContent = '(' + verificaciones.length + ')';
+                navLabel.classList.remove('is-hidden');
+            } else {
+                navLabel.textContent = '';
+                navLabel.classList.add('is-hidden');
+            }
+        }
+    } catch (error) {
+        console.error('Error actualizando contador de verificaciones:', error);
+    }
+}
 
 window.verificacionesReload = async function () {
     const tbody = document.getElementById('verificacionesTBody');
