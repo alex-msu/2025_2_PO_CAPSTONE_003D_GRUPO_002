@@ -1,0 +1,1 @@
+// Este DTO no necesita campos, solo se usa para identificar la acción

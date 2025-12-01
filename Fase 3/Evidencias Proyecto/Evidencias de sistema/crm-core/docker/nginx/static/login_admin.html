@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRM Flota PepsiCo - Admin Login</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #002D62 0%, #001a3a 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .admin-login-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            width: 100%;
+            max-width: 420px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .admin-login-header {
+            background: #002D62;
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .admin-login-header::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.1) 50%, transparent 70%);
+            animation: shine 3s infinite linear;
+        }
+        
+        @keyframes shine {
+            0% {
+                transform: translateX(-100%);
+            }
+            100% {
+                transform: translateX(100%);
+            }
+        }
+        
+        .admin-login-header h1 {
+            font-size: 24px;
+            margin-bottom: 5px;
+            position: relative;
+        }
+        
+        .admin-login-header p {
+            font-size: 14px;
+            opacity: 0.9;
+            position: relative;
+        }
+        
+        .admin-badge {
+            display: inline-block;
+            background: #FFC107;
+            color: #002D62;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-top: 10px;
+            position: relative;
+        }
+        
+        .admin-login-form {
+            padding: 30px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 15px;
+            transition: border-color 0.3s;
+        }
+        
+        .form-group input:focus {
+            border-color: #002D62;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(0, 45, 98, 0.1);
+        }
+        
+        .password-container {
+            position: relative;
+        }
+        
+        .toggle-password {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #666;
+        }
+        
+        .btn-admin-login {
+            width: 100%;
+            background: #002D62;
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-top: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-admin-login:hover {
+            background: #001a3a;
+        }
+        
+        .btn-admin-login:active {
+            transform: translateY(1px);
+        }
+        
+        .admin-login-footer {
+            text-align: center;
+            padding: 20px;
+            border-top: 1px solid #eee;
+            font-size: 13px;
+            color: #666;
+        }
+        
+        .security-notice {
+            background: #f8f9fa;
+            border-left: 4px solid #002D62;
+            padding: 10px 15px;
+            margin-top: 20px;
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .error-message {
+            color: #d32f2f;
+            font-size: 13px;
+            margin-top: 5px;
+            display: none;
+        }
+        
+        .login-options {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            font-size: 13px;
+        }
+        
+        .back-to-main {
+            color: #002D62;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .back-to-main:hover {
+            text-decoration: underline;
+        }
+        /* Animación de carga */
+        
+        .loader {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+            margin: 0 auto;
+        }
+        
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="admin-login-container">
+        <div class="admin-login-header">
+            <h1>CRM Flota PepsiCo</h1>
+            <p>Acceso de Administración</p>
+            <div class="admin-badge">SISTEMA SEGURO</div>
+        </div>
+
+        <form class="admin-login-form" id="adminLoginForm">
+            <div id="apiStatus" class="error-message" style="display: none; background: #fff3cd; border-left: 4px solid #ffc107; padding: 10px; margin-bottom: 15px; border-radius: 4px;"></div>
+            
+            <div class="form-group">
+                <label for="adminEmail">Email de Administrador</label>
+                <input type="email" id="adminEmail" name="email" placeholder="admin@pepsico.cl" required autocomplete="email">
+                <div class="error-message" id="emailError">El email es obligatorio</div>
+            </div>
+
+            <div class="form-group">
+                <label for="adminPassword">Contraseña de Administrador</label>
+                <div class="password-container">
+                    <input type="password" id="adminPassword" name="password" placeholder="••••••••" required minlength="6" autocomplete="current-password">
+                    <button type="button" class="toggle-password" id="togglePassword">👁️</button>
+                </div>
+                <div class="error-message" id="passwordError">La contraseña es obligatoria</div>
+            </div>
+            
+            <div id="msg" class="error-message" style="display: none; background: #f8d7da; border-left: 4px solid #dc3545; padding: 10px; margin-bottom: 15px; border-radius: 4px;"></div>
+
+            <button type="submit" class="btn-admin-login" id="adminLoginBtn">
+                <span id="btnText">Acceder al Panel de Administración</span>
+                <div class="loader" id="btnLoader"></div>
+            </button>
+
+            <div class="security-notice">
+                ⚠️ Este acceso es exclusivo para personal autorizado. Todas las actividades son monitorizadas.
+            </div>
+
+            <div class="login-options">
+                <a href="login.html" class="back-to-main">← Volver al login general</a>
+            </div>
+        </form>
+
+        <div class="admin-login-footer">
+            Versión 1.0 · Acceso Restringido · PepsiCo Chile
+        </div>
+    </div>
+
+    <script src="assets/js/login_admin.js" defer></script>
+</body>
+
+</html>

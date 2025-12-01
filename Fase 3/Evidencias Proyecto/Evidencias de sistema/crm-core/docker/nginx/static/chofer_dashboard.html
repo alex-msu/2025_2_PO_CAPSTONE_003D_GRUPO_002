@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard Chofer - CRM Flota PepsiCo</title>
+
+    <!-- CSS externo -->
+    <link rel="stylesheet" href="assets/css/style-chofer.css">
+    <link rel="stylesheet" href="assets/css/logout_button.css">
+</head>
+
+<body>
+    <header class="header">
+        <div class="logo">
+            <h1>CRM Flota PepsiCo</h1>
+        </div>
+        <div class="user-info">
+            <span class="user-role">Chofer</span>
+            <span id="userName">Roberto Silva</span>
+            <div class="notifications-wrapper" style="position: relative;">
+                <button id="notificationsBtn" class="btn btn-secondary" style="position: relative; margin-right: 10px;">
+                    🔔 Notificaciones
+                    <span id="notificationsBadge" class="notification-badge"
+                        style="display: none; position: absolute; top: -8px; background: #dc3545; color: white; border-radius: 50%; width: 20px; height: 20px; font-size: 12px; display: flex; align-items: center; justify-content: center; font-weight: bold;">0</span>
+                </button>
+                <div id="notificationsPanel" class="notifications-panel"
+                    style="display: none; position: absolute; top: 100%; right: 0; width: 400px; max-height: 500px; background: white; border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 1000; margin-top: 10px;">
+                    <div class="notifications-header"
+                        style="padding: 15px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
+                        <h3 style="margin: 0; font-size: 16px;">Notificaciones</h3>
+                        <button onclick="NotificationsManager.markAllAsRead()" class="btn btn-sm btn-secondary"
+                            style="font-size: 12px;">Marcar todas como leídas</button>
+                    </div>
+                    <div class="notifications-content" style="max-height: 400px; overflow-y: auto; padding: 10px;">
+                        <ul id="notificationList" style="list-style: none; padding: 0; margin: 0;">
+                            <li class="empty-state">Cargando...</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <button class="btn btn-primary" id="btnLogout">Cerrar Sesión</button>
+        </div>
+    </header>
+
+    <nav class="nav-container">
+        <ul class="nav-menu">
+            <li><a href="#" class="active">Mi Vehículo</a></li>
+            <li><a href="#" id="goSolicitudes">Solicitudes</a></li>
+            <li><a href="#" id="goHistorial">Historial</a></li>
+        </ul>
+    </nav>
+
+    <main class="main-content">
+
+        <!-- Toast / Cajita de notificación -->
+        <div id="mainStatus" class="status"></div>
+
+        <div class="page-title">
+            <h2>Estado de Mi Vehículo</h2>
+            <div>
+                <button class="btn btn-primary" id="btnNuevaSolicitud">Nueva Solicitud</button>
+                <button class="btn btn-success" id="btnContactarTaller">Contactar Taller</button>
+            </div>
+        </div>
+
+        <div class="vehicle-card" id="vehiculoPanel" hidden>
+            <div class="vehicle-header">
+                <div>
+                    <h3 id="vehiculoTitulo">Vehículo asignado</h3>
+                    <p class="vehicle-subtitle" id="vehiculoSubtitulo">Patente — Modelo</p>
+                </div>
+                <span class="status-badge status-pendiente" id="vehiculoEstadoBadge">Sin datos</span>
+            </div>
+            <div class="vehicle-info">
+                <div class="info-item" data-vehicle-section="state">
+                    <h4>Estado Actual</h4>
+                    <p><span class="status-badge status-pendiente" id="vehiculoEstadoDetalle">Sin estado</span></p>
+                </div>
+                <div class="info-item" data-vehicle-section="details">
+                    <h4>Taller Asignado</h4>
+                    <p id="vehiculoTaller">Sin taller</p>
+                </div>
+                <div class="info-item" data-vehicle-section="details">
+                    <h4>Mecánico</h4>
+                    <p id="mecanicoAsignado">No asignado</p>
+                </div>
+                <div class="info-item" data-vehicle-section="details">
+                    <h4>Fecha Creación</h4>
+                    <p id="vehiculoFechaIngreso">—</p>
+                </div>
+                <div class="info-item" data-vehicle-section="details">
+                    <h4>Fecha Estimada Término</h4>
+                    <p id="vehiculoFechaEstimada">—</p>
+                </div>
+                <div class="info-item" data-vehicle-section="details">
+                    <h4>Contacto Taller</h4>
+                    <p><a href="#" id="vehiculoContacto" class="contact-link">—</a></p>
+                </div>
+            </div>
+
+            <div class="page-title sub-title">
+                <h4>Problema Reportado</h4>
+            </div>
+            <p id="vehiculoProblema" class="vehicle-problem">Sin problemas reportados.</p>
+
+            <div class="vehicle-actions">
+                <button class="btn btn-primary" id="btnVerDetalles" type="button">Ver Detalles Completo</button>
+                <button class="btn btn-warning" id="btnSolicitarActualizacion" type="button">Solicitar
+                    Actualización</button>
+            </div>
+        </div>
+
+        <div class="vehicle-card empty-card" id="vehiculoSinAsignacion">
+            <h3>Sin vehículo asignado</h3>
+            <p>Tu cuenta aún no tiene un vehículo asociado. Contacta a tu supervisor o al equipo de flota para que
+                puedan asignarte uno.</p>
+            <button class="btn btn-primary" id="btnSolicitarAsignacion" type="button">Notificar al supervisor</button>
+        </div>
+
+        <!-- Timeline existente -->
+        <div class="timeline" id="timeline" aria-live="polite"></div>
+    </main>
+
+    <!-- Modal: Retiro de Vehículo -->
+    <div class="modal" id="modalRetiroVehiculo" aria-hidden="true" style="display:none;">
+        <div class="modal-backdrop" data-close></div>
+        <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="modalRetiroTitle">
+            <div class="modal-header">
+                <h3 id="modalRetiroTitle">Retiro de Vehículo</h3>
+                <button class="modal-close" data-close>&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="retiroForm">
+                    <input type="hidden" id="retiro_vehiculo_id" />
+                    <div class="form-row">
+                        <label>Orden de Trabajo</label>
+                        <div id="retiro_ot_numero" style="padding: 10px; background: #f8f9fa; border-radius: 4px;">—
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <label>Vehículo</label>
+                        <div id="retiro_vehiculo_info" style="padding: 10px; background: #f8f9fa; border-radius: 4px;">—
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <label>Descripción del Trabajo Realizado</label>
+                        <div id="retiro_descripcion"
+                            style="padding: 10px; background: #f8f9fa; border-radius: 4px; white-space: pre-wrap; max-height: 150px; overflow-y: auto;">
+                            —</div>
+                    </div>
+                    <div class="form-row">
+                        <label>
+                            <input type="checkbox" id="retiro_vehiculo_operativo" required />
+                            Confirmo que el vehículo está operativo y todo calza según lo informado
+                        </label>
+                    </div>
+                    <div class="form-row">
+                        <label for="retiro_observaciones">Observaciones (opcional)</label>
+                        <textarea id="retiro_observaciones" rows="3"
+                            placeholder="Notas adicionales sobre el estado del vehículo..."></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <span id="retiroMsg" class="status hidden"></span>
+                <button class="btn btn-warning" data-close>Cancelar</button>
+                <button class="btn btn-success" form="retiroForm" type="submit">Confirmar Retiro</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Historial -->
+    <div class="modal" id="modalHistorial" aria-hidden="true" style="display:none;">
+        <div class="modal-backdrop" data-close></div>
+        <div class="modal-dialog modal-lg" role="dialog" aria-modal="true" aria-labelledby="modalHistorialTitle">
+            <div class="modal-header">
+                <h3 id="modalHistorialTitle">Historial de Órdenes de Trabajo</h3>
+                <button class="modal-close" data-close>&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="historialLoading" style="text-align: center; padding: 20px;">
+                    <p>Cargando historial...</p>
+                </div>
+                <div id="historialContent" style="display: none;">
+                    <div id="historialList"></div>
+                </div>
+                <div id="historialEmpty" style="display: none; text-align: center; padding: 20px;">
+                    <p>No hay historial de órdenes de trabajo completadas.</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" data-close>Cerrar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Detalle de OT -->
+    <div class="modal" id="modalDetalleOt" aria-hidden="true" style="display:none;">
+        <div class="modal-backdrop" data-close></div>
+        <div class="modal-dialog modal-lg" role="dialog" aria-modal="true" aria-labelledby="modalDetalleOtTitle">
+            <div class="modal-header professional">
+                <h3 id="modalDetalleOtTitle">Detalle de la Orden de Trabajo</h3>
+                <button class="modal-close" data-close>&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="detalleOtContent" class="professional-form">
+                    <!-- Se rellena por JS -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" data-close>Cerrar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Nueva Solicitud -->
+    <div class="modal" id="modalSolicitud" aria-hidden="true" style="display:none;">
+        <div class="modal-backdrop" data-close></div>
+        <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+            <div class="modal-header">
+                <h3 id="modalTitle">Nueva Solicitud</h3>
+                <button class="modal-close" data-close>&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="formSolicitud">
+                    <div class="form-row">
+                        <label>Vehículo asignado</label>
+                        <div class="assigned-vehicle" id="vehiculoSolicitudResumen">Sin vehículo</div>
+                    </div>
+
+                    <div class="form-row">
+                        <label for="descripcion">Descripción</label>
+                        <textarea id="descripcion" rows="3" placeholder="Describe el problema observado"
+                            required></textarea>
+                    </div>
+
+                    <div class="form-row">
+                        <label for="evidenciaInput">Evidencia fotográfica (hasta 5 archivos)</label>
+                        <input type="file" id="evidenciaInput" accept="image/jpeg,image/png,image/webp,application/pdf,text/plain,.jpg,.jpeg,.png,.webp,.pdf,.txt,.doc,.docx" multiple>
+                        <div class="form-hint" id="evidenciaResumen">Formatos permitidos: JPG, JPEG, PNG, WEBP, PDF, TXT, DOC, DOCX. Debes adjuntar al menos un archivo.</div>
+                    </div>
+
+                    <div class="form-row">
+                        <label>
+                            <input type="checkbox" id="chkEmergencia"> Solicitud de emergencia
+                        </label>
+                    </div>
+                </form>
+                <div class="form-hint">El equipo de taller revisará y aprobará/rechazará esta solicitud.</div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-warning" data-close>Cancelar</button>
+                <button class="btn btn-primary" id="btnEnviarSolicitud" form="formSolicitud">Enviar Solicitud</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Módulo de autenticación (debe cargarse primero) -->
+    <script src="assets/js/auth.js"></script>
+    <script src="assets/js/offline-handler.js"></script>
+    <script src="assets/js/validations.js"></script>
+    <script src="assets/js/file-utils.js"></script>
+    <script src="assets/js/auth.js"></script>
+    <script src="assets/js/logout_button.js"></script>
+    <script src="assets/js/error-handler.js"></script>
+    <script src="assets/js/loading-utils.js"></script>
+    <script src="assets/js/notifications-manager.js"></script>
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js" crossorigin="anonymous"></script>
+    <!-- JS externo -->
+    <script src="assets/js/chofer.js" defer></script>
+</body>
+
+</html>

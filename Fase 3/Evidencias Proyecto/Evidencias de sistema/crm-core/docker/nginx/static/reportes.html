@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generar Reportes - CRM Flota PepsiCo</title>
+    <style>
+        /* Los mismos estilos anteriores se mantienen */
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+         :root {
+            --primary: #004B93;
+            --secondary: #FFC72C;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            padding: 20px;
+        }
+        
+        .header {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        
+        .report-config {
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        
+        select,
+        input,
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-right: 10px;
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+        
+        .report-preview {
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            display: none;
+        }
+        
+        .report-header {
+            text-align: center;
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .report-content {
+            line-height: 1.6;
+        }
+        
+        .report-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        
+        .report-table th,
+        .report-table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+        
+        .report-table th {
+            background: #f8f9fa;
+        }
+        
+        .signature-section {
+            margin-top: 50px;
+            text-align: right;
+        }
+        
+        .signature-line {
+            border-top: 1px solid #333;
+            width: 300px;
+            display: inline-block;
+            margin-top: 40px;
+        }
+        
+        @media print {
+            body {
+                padding: 0;
+            }
+            .report-config,
+            .btn {
+                display: none;
+            }
+            .report-preview {
+                display: block !important;
+                box-shadow: none;
+                padding: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <h1>Generador de Reportes - CRM Flota PepsiCo</h1>
+        <p>Seleccione el tipo de reporte y configure los parámetros</p>
+    </div>
+
+    <div class="report-config">
+        <div class="form-group">
+            <label for="reportType">Tipo de Reporte</label>
+            <select id="reportType" onchange="cambiarTipoReporte()">
+                <option value="">Seleccione un tipo de reporte</option>
+                <option value="jefe_taller">Reporte Jefe de Taller (Diario)</option>
+                <option value="mecanico">Reporte Mecánico (Productividad)</option>
+                <option value="supervisor">Reporte Supervisor (KPIs)</option>
+                <option value="problema">Reporte de Interacción de Problema</option>
+                <option value="vehiculo">Reporte por Vehículo</option>
+            </select>
+        </div>
+
+        <div id="parametrosReporte">
+            <!-- Aquí se cargan los parámetros específicos según el tipo de reporte -->
+        </div>
+
+        <div class="form-group">
+            <label for="formato">Formato de Salida</label>
+            <select id="formato">
+                <option value="pdf">PDF (Para imprimir)</option>
+                <option value="pantalla">Vista previa en pantalla</option>
+            </select>
+        </div>
+
+        <button class="btn btn-primary" onclick="generarReporte()">Generar Reporte</button>
+        <button class="btn btn-success" onclick="imprimirReporte()" style="display:none;" id="btnImprimir">Imprimir Reporte</button>
+    </div>
+
+    <div class="report-preview" id="reportPreview">
+        <!-- Aquí se muestra la vista previa del reporte -->
+    </div>
+
+    <script>
+        // Datos de ejemplo para los reportes
+        const datosEjemplo = {
+            vehiculos: [{
+                patente: 'BKXL45',
+                modelo: 'Volvo FH16',
+                taller: 'Central',
+                estado: 'En Proceso',
+                fechaIngreso: '15/11/2025'
+            }, {
+                patente: 'AFGH78',
+                modelo: 'Mercedes Actros',
+                taller: 'Norte',
+                estado: 'Pendiente',
+                fechaIngreso: '14/11/2025'
+            }, {
+                patente: 'CDJK23',
+                modelo: 'Scania R500',
+                taller: 'Sur',
+                estado: 'Completado',
+                fechaIngreso: '13/11/2025'
+            }],
+            mecanicos: [{
+                nombre: 'Juan Pérez',
+                vehiculosAsignados: 4,
+                completados: 1,
+                eficiencia: '85%'
+            }, {
+                nombre: 'María González',
+                vehiculosAsignados: 3,
+                completados: 1,
+                eficiencia: '90%'
+            }, {
+                nombre: 'Luis Martínez',
+                vehiculosAsignados: 5,
+                completados: 3,
+                eficiencia: '78%'
+            }],
+            problemas: [{
+                fecha: '15/11/2025 08:30',
+                evento: 'Ingreso al taller',
+                responsable: 'Recepcionista',
+                descripcion: 'Vehículo ingresado para revisión'
+            }, {
+                fecha: '15/11/2025 11:45',
+                evento: 'Diagnóstico inicial',
+                responsable: 'Mecánico',
+                descripcion: 'Falla en sistema de inyección identificada'
+            }, {
+                fecha: '15/11/2025 14:15',
+                evento: 'Solicitud de repuestos',
+                responsable: 'Jefe Taller',
+                descripcion: 'Inyectores y bomba de combustible solicitados'
+            }]
+        };
+
+        function cambiarTipoReporte() {
+            const tipo = document.getElementById('reportType').value;
+            const contenedor = document.getElementById('parametrosReporte');
+
+            let html = '';
+
+            switch (tipo) {
+                case 'jefe_taller':
+                    html = `
+                        <div class="form-group">
+                            <label for="fecha">Fecha del Reporte</label>
+                            <input type="date" id="fecha" value="${new Date().toISOString().split('T')[0]}">
+                        </div>
+                        <div class="form-group">
+                            <label for="taller">Taller</label>
+                            <select id="taller">
+                                <option value="todos">Todos los talleres</option>
+                                <option value="central">Taller Central</option>
+                                <option value="norte">Taller Norte</option>
+                                <option value="sur">Taller Sur</option>
+                            </select>
+                        </div>
+                    `;
+                    break;
+
+                case 'mecanico':
+                    html = `
+                        <div class="form-group">
+                            <label for="mecanico">Mecánico</label>
+                            <select id="mecanico">
+                                <option value="todos">Todos los mecánicos</option>
+                                <option value="Juan Pérez">Juan Pérez</option>
+                                <option value="María González">María González</option>
+                                <option value="Luis Martínez">Luis Martínez</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="rangoFechas">Rango de Fechas</label>
+                            <div style="display: flex; gap: 10px;">
+                                <input type="date" id="fechaInicio" value="${new Date(Date.now() - 7*24*60*60*1000).toISOString().split('T')[0]}">
+                                <input type="date" id="fechaFin" value="${new Date().toISOString().split('T')[0]}">
+                            </div>
+                        </div>
+                    `;
+                    break;
+
+                case 'problema':
+                    html = `
+                        <div class="form-group">
+                            <label for="patenteProblema">Patente del Vehículo</label>
+                            <input type="text" id="patenteProblema" placeholder="Ej: BKXL45">
+                        </div>
+                        <div class="form-group">
+                            <label for="detalleProblema">Detalle del Problema (Opcional)</label>
+                            <textarea id="detalleProblema" placeholder="Describa el problema específico"></textarea>
+                        </div>
+                    `;
+                    break;
+
+                default:
+                    html = '<p>Seleccione un tipo de reporte para ver los parámetros</p>';
+            }
+
+            contenedor.innerHTML = html;
+        }
+
+        function generarReporte() {
+            const tipo = document.getElementById('reportType').value;
+            const formato = document.getElementById('formato').value;
+            const preview = document.getElementById('reportPreview');
+            const btnImprimir = document.getElementById('btnImprimir');
+
+            if (!tipo) {
+                alert('Por favor seleccione un tipo de reporte');
+                return;
+            }
+
+            let reporteHTML = '';
+
+            switch (tipo) {
+                case 'jefe_taller':
+                    reporteHTML = generarReporteJefeTaller();
+                    break;
+                case 'mecanico':
+                    reporteHTML = generarReporteMecanico();
+                    break;
+                case 'problema':
+                    reporteHTML = generarReporteProblema();
+                    break;
+                default:
+                    reporteHTML = '<p>Reporte no disponible</p>';
+            }
+
+            preview.innerHTML = reporteHTML;
+            preview.style.display = 'block';
+            btnImprimir.style.display = 'inline-block';
+
+            if (formato === 'pdf') {
+                setTimeout(function() {
+                    window.print();
+                }, 500);
+            }
+        }
+
+        // Función auxiliar para obtener valores de elementos de forma segura
+        function getElementValue(id, defaultValue) {
+            var element = document.getElementById(id);
+            return element ? element.value : defaultValue;
+        }
+
+        function generarReporteJefeTaller() {
+            var fecha = getElementValue('fecha', new Date().toISOString().split('T')[0]);
+            var taller = getElementValue('taller', 'todos');
+
+            return `
+                <div class="report-header">
+                    <h1>REPORTE DIARIO - JEFE DE TALLER</h1>
+                    <p><strong>Fecha:</strong> ${fecha} | <strong>Taller:</strong> ${taller === 'todos' ? 'Todos' : taller}</p>
+                    <p><strong>Generado por:</strong> Carlos López (Jefe de Taller)</p>
+                </div>
+                
+                <div class="report-content">
+                    <h2>Resumen Ejecutivo</h2>
+                    <table class="report-table">
+                        <tr><th>Total Vehículos en Taller:</th><td>15</td></tr>
+                        <tr><th>En Proceso:</th><td>10</td></tr>
+                        <tr><th>Completados Hoy:</th><td>5</td></tr>
+                        <tr><th>Pendientes Aprobación:</th><td>3</td></tr>
+                        <tr><th>Eficiencia General:</th><td>87%</td></tr>
+                    </table>
+                    
+                    <h2>Vehículos en Taller</h2>
+                    <table class="report-table">
+                        <thead>
+                            <tr>
+                                <th>Patente</th>
+                                <th>Modelo</th>
+                                <th>Taller</th>
+                                <th>Fecha Ingreso</th>
+                                <th>Estado</th>
+                                <th>Mecánico</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${datosEjemplo.vehiculos.map(function(v) {
+                                return `
+                                    <tr>
+                                        <td>${v.patente}</td>
+                                        <td>${v.modelo}</td>
+                                        <td>${v.taller}</td>
+                                        <td>${v.fechaIngreso}</td>
+                                        <td>${v.estado}</td>
+                                        <td>${datosEjemplo.mecanicos[0].nombre}</td>
+                                    </tr>
+                                `;
+                            }).join('')}
+                        </tbody>
+                    </table>
+                    
+                    <h2>Desempeño de Mecánicos</h2>
+                    <table class="report-table">
+                        <thead>
+                            <tr>
+                                <th>Mecánico</th>
+                                <th>Vehículos Asignados</th>
+                                <th>Completados</th>
+                                <th>Eficiencia</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${datosEjemplo.mecanicos.map(function(m) {
+                                return `
+                                    <tr>
+                                        <td>${m.nombre}</td>
+                                        <td>${m.vehiculosAsignados}</td>
+                                        <td>${m.completados}</td>
+                                        <td>${m.eficiencia}</td>
+                                    </tr>
+                                `;
+                            }).join('')}
+                        </tbody>
+                    </table>
+                    
+                    <h2>Observaciones y Recomendaciones</h2>
+                    <p>• Se requiere atención prioritaria al vehículo patente BKXL45</p>
+                    <p>• Optimizar distribución de carga de trabajo entre mecánicos</p>
+                    <p>• Revisar stock de repuestos críticos</p>
+                    
+                    <div class="signature-section">
+                        <p>Firma del Jefe de Taller</p>
+                        <div class="signature-line"></div>
+                        <p>Carlos López</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        function generarReporteMecanico() {
+            var mecanico = getElementValue('mecanico', 'todos');
+            var fechaInicio = getElementValue('fechaInicio', '');
+            var fechaFin = getElementValue('fechaFin', '');
+            
+            return `
+                <div class="report-header">
+                    <h1>REPORTE DE PRODUCTIVIDAD - MECÁNICO</h1>
+                    <p><strong>Período:</strong> ${fechaInicio} a ${fechaFin}</p>
+                    <p><strong>Mecánico:</strong> ${mecanico === 'todos' ? 'Todos' : mecanico}</p>
+                </div>
+                
+                <div class="report-content">
+                    <h2>Resumen de Actividades</h2>
+                    <table class="report-table">
+                        <tr><th>Total Tareas Asignadas:</th><td>12</td></tr>
+                        <tr><th>Tareas Completadas:</th><td>8</td></tr>
+                        <tr><th>Tareas en Proceso:</th><td>3</td></tr>
+                        <tr><th>Tasa de Completación:</th><td>67%</td></tr>
+                        <tr><th>Tiempo Promedio por Vehículo:</th><td>4.5 horas</td></tr>
+                    </table>
+                    
+                    <h2>Detalle de Tareas</h2>
+                    <table class="report-table">
+                        <thead>
+                            <tr>
+                                <th>Vehículo</th>
+                                <th>Tarea</th>
+                                <th>Fecha</th>
+                                <th>Estado</th>
+                                <th>Tiempo Invertido</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Volvo FH16 - BKXL45</td>
+                                <td>Reparación motor</td>
+                                <td>15/11/2025</td>
+                                <td>En Proceso</td>
+                                <td>4 horas</td>
+                            </tr>
+                            <tr>
+                                <td>Scania R500 - CDJK23</td>
+                                <td>Revisión general</td>
+                                <td>14/11/2025</td>
+                                <td>Completado</td>
+                                <td>6 horas</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <h2>Repuestos Utilizados</h2>
+                    <table class="report-table">
+                        <thead>
+                            <tr>
+                                <th>Repuesto</th>
+                                <th>Cantidad</th>
+                                <th>Vehículo</th>
+                                <th>Costo Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>Filtro aceite</td><td>3</td><td>Varios</td><td>$45.000</td></tr>
+                            <tr><td>Pastillas freno</td><td>2 juegos</td><td>BKXL45</td><td>$120.000</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        function generarReporteProblema() {
+            var patente = getElementValue('patenteProblema', 'BKXL45');
+            var detalle = getElementValue('detalleProblema', 'Falla en motor');
+            
+            return `
+                <div class="report-header">
+                    <h1>REPORTE DE INTERACCIÓN DE PROBLEMA</h1>
+                    <p><strong>Vehículo:</strong> ${patente}</p>
+                    <p><strong>Problema:</strong> ${detalle}</p>
+                    <p><strong>Fecha de generación:</strong> ${new Date().toLocaleDateString()}</p>
+                </div>
+                
+                <div class="report-content">
+                    <h2>Linea de Tiempo del Problema</h2>
+                    <table class="report-table">
+                        <thead>
+                            <tr>
+                                <th>Fecha/Hora</th>
+                                <th>Evento</th>
+                                <th>Responsable</th>
+                                <th>Descripción</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${datosEjemplo.problemas.map(function(p) {
+                                return `
+                                    <tr>
+                                        <td>${p.fecha}</td>
+                                        <td>${p.evento}</td>
+                                        <td>${p.responsable}</td>
+                                        <td>${p.descripcion}</td>
+                                    </tr>
+                                `;
+                            }).join('')}
+                        </tbody>
+                    </table>
+                    
+                    <h2>Análisis del Problema</h2>
+                    <p><strong>Causa Raíz Identificada:</strong> Falla en el sistema de inyección de combustible debido a contaminación en el tanque.</p>
+                    <p><strong>Acciones Correctivas:</strong> Limpieza completa del sistema de combustible, reemplazo de filtros e inyectores.</p>
+                    <p><strong>Tiempo Total de Resolución:</strong> 3 días</p>
+                    <p><strong>Costo Estimado:</strong> $850.000</p>
+                    
+                    <h2>Recomendaciones para Prevención</h2>
+                    <p>• Implementar controles de calidad en el combustible adquirido</p>
+                    <p>• Capacitación a choferes en identificación temprana de problemas</p>
+                    <p>• Mantenimiento preventivo cada 10.000 km</p>
+                    
+                    <div class="signature-section">
+                        <p>Firma del Responsable</p>
+                        <div class="signature-line"></div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function imprimirReporte() {
+            window.print();
+        }
+
+        // Inicializar la página cuando se carga
+        window.onload = function() {
+            cambiarTipoReporte();
+        };
+    </script>
+</body>
+
+</html>

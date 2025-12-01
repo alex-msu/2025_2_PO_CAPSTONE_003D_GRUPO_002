@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>CRM Flota PepsiCo - Login</title>
+    <style>
+        /* --- ESTILOS DE TU DISEÑO (PepsiCo) --- */
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #004B93 0%, #002D62 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .login-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 420px;
+            overflow: hidden;
+        }
+        
+        .login-header {
+            background: #004B93;
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+        }
+        
+        .login-header h1 {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+        
+        .login-header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .login-form {
+            padding: 30px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+        }
+        
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 15px;
+            transition: border-color 0.3s;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: #004B93;
+            outline: none;
+        }
+        
+        .btn-login {
+            width: 100%;
+            background: #004B93;
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-top: 10px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .btn-login:hover {
+            background: #003366;
+        }
+        
+        .btn-login[disabled] {
+            opacity: .6;
+            cursor: not-allowed;
+        }
+        
+        .login-footer {
+            text-align: center;
+            padding: 20px;
+            border-top: 1px solid #eee;
+            font-size: 13px;
+            color: #666;
+        }
+        /* --- CLASES AÑADIDAS (requeridas por el script de login) --- */
+        
+        .status {
+            padding: 10px 12px;
+            border-radius: 6px;
+            /* Ajustado al nuevo diseño */
+            font-size: 13px;
+            margin-bottom: 12px;
+            border: 1px solid transparent;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .ok {
+            background: #ecfdf5;
+            color: #065f46;
+            border-color: #a7f3d0;
+        }
+        
+        .bad {
+            background: #fef2f2;
+            color: #991b1b;
+            border-color: #fecaca;
+        }
+        
+        .warn {
+            background: #fff7ed;
+            color: #9a3412;
+            border-color: #fed7aa;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid currentColor;
+            border-right-color: transparent;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            vertical-align: -2px;
+        }
+        
+        @keyframes spin {
+            to {
+                transform: rotate(360deg)
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="login-container">
+        <div class="login-header">
+            <h1>CRM Flota PepsiCo</h1>
+            <p>Sistema de Gestión de Talleres</p>
+        </div>
+
+        <form class="login-form" id="loginForm" autocomplete="on">
+
+            <div id="apiStatus" class="status warn">
+                <span class="spinner" aria-hidden="true"></span>
+                <span>Verificando conexión con la API…</span>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" placeholder="tú@empresa.cl" required>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Contraseña</label>
+                <input type="password" id="password" name="password" placeholder="••••••••" required minlength="6">
+            </div>
+
+            <div id="msg" class="status hidden"></div>
+
+            <button type="submit" class="btn-login" id="loginBtn">
+                <span id="btnText">Ingresar al Sistema</span>
+                <span id="btnLoader" class="spinner hidden" aria-hidden="true" style="display: none; visibility: hidden;"></span>
+            </button>
+        </form>
+
+        <div class="login-footer">
+            Versión 1.0 · PepsiCo Chile
+        </div>
+    </div>
+
+    <!-- Cargar módulo de utilidades de carga -->
+    <script src="assets/js/loading-utils.js"></script>
+
+    <script>
+        /* ========= CONFIG ========= */
+        var API_BASE = '/api'; /* IMPORTANT: siempre con /api para pasar por Nginx → Nest */
+        var TOKEN_KEY = 'crm.token';
+
+        /* RUTAS ACTUALIZADAS (según tu tree.txt) */
+        var PREFERRED_BY_ROLE = {
+            'admin': ['/admin_dashboard.html'],
+            'jefe_taller': ['/jefe_taller_dashboard.html'],
+            'mecanico': ['/mecanico_dashboard.html'],
+            'chofer': ['/chofer_dashboard.html'],
+            'supervisor': ['/reportes.html'] // Asumo que reportes.html es para supervisor
+        };
+        var FALLBACKS = ['/base.html'];
+
+        /* ========= UTILS UI ========= */
+        function $(id) {
+            return document.getElementById(id);
+        }
+        var apiStatus = $('apiStatus');
+        var loginForm = $('loginForm');
+        var loginBtn = $('loginBtn');
+        var btnText = $('btnText');
+        var btnLoader = $('btnLoader');
+        var msg = $('msg');
+
+        // Verificar si el localStorage está siendo limpiado
+        console.log('[Login Init] localStorage al cargar página:', {
+            length: localStorage.length,
+            keys: Object.keys(localStorage),
+            hasConfig: !!localStorage.getItem('crm.config'),
+            hasToken: !!localStorage.getItem(TOKEN_KEY)
+        });
+
+        /**
+         * Manejar estado de carga del botón usando LoadingUtils
+         * Adaptado para trabajar con la estructura actual del botón (texto + spinner separados)
+         * Usa LoadingUtils para manejar el estado del botón y maneja los spans manualmente
+         */
+        function setBtnLoading(loading) {
+            if (!loginBtn) {
+                console.warn('[setBtnLoading] loginBtn no está disponible');
+                return;
+            }
+            
+            if (loading) {
+                // Usar LoadingUtils para estado general del botón
+                if (typeof LoadingUtils !== 'undefined' && LoadingUtils.showButtonLoading) {
+                    // Guardar el HTML original antes de modificarlo
+                    if (!loginBtn.dataset.originalHtml) {
+                        loginBtn.dataset.originalHtml = loginBtn.innerHTML;
+                    }
+                }
+                
+                // Mostrar estado de carga
+                loginBtn.disabled = true;
+                loginBtn.setAttribute('data-loading', 'true');
+                
+                // Actualizar texto
+                if (btnText) {
+                    btnText.textContent = 'Ingresando…';
+                    btnText.style.display = 'inline';
+                }
+                
+                // Mostrar spinner - usar múltiples métodos para asegurar visibilidad
+                if (btnLoader) {
+                    btnLoader.classList.remove('hidden');
+                    btnLoader.style.display = 'inline-block';
+                    btnLoader.style.visibility = 'visible';
+                    btnLoader.removeAttribute('hidden');
+                    btnLoader.setAttribute('aria-hidden', 'false');
+                }
+            } else {
+                // Ocultar estado de carga - usar múltiples métodos para asegurar ocultación
+                loginBtn.disabled = false;
+                loginBtn.removeAttribute('data-loading');
+                
+                // Restaurar texto original
+                if (btnText) {
+                    btnText.textContent = 'Ingresar al Sistema';
+                    btnText.style.display = 'inline';
+                }
+                
+                // Ocultar spinner - usar múltiples métodos para asegurar ocultación completa
+                if (btnLoader) {
+                    btnLoader.classList.add('hidden');
+                    btnLoader.style.display = 'none';
+                    btnLoader.style.visibility = 'hidden';
+                    btnLoader.setAttribute('hidden', '');
+                    btnLoader.setAttribute('aria-hidden', 'true');
+                    
+                    // Forzar reflow para asegurar que los cambios se apliquen
+                    void btnLoader.offsetHeight;
+                }
+            }
+        }
+        
+        // Asegurar que el spinner esté oculto al inicializar
+        (function initButtonState() {
+            if (btnLoader) {
+                btnLoader.classList.add('hidden');
+                btnLoader.style.display = 'none';
+                btnLoader.style.visibility = 'hidden';
+                btnLoader.setAttribute('hidden', '');
+                btnLoader.setAttribute('aria-hidden', 'true');
+            }
+        })();
+
+        function flashStatus(target, kind, text) {
+            if (!target) {
+                console.error('[flashStatus] Target no está disponible');
+                return;
+            }
+            console.log('[flashStatus] Mostrando mensaje:', kind, text);
+            console.log('[flashStatus] Clases antes:', target.className);
+            target.classList.remove('hidden', 'ok', 'bad', 'warn');
+            target.classList.add(kind);
+            target.innerHTML = text;
+            // Asegurarse de que el elemento sea visible
+            target.style.display = '';
+            console.log('[flashStatus] Clases después:', target.className);
+            console.log('[flashStatus] Display style:', target.style.display);
+            console.log('[flashStatus] Computed display:', window.getComputedStyle(target).display);
+        }
+
+        function safeMessage(res, fallback) {
+            return res.json().then(function(b) {
+                if (b && typeof b.message === 'string') return b.message;
+                if (b && Array.isArray(b.message) && b.message.length) return b.message[0];
+                return fallback;
+            }).catch(function() {
+                return fallback;
+            });
+        }
+
+        /* ========= FETCH HELPERS ========= */
+        function bearerFetch(url, opts) {
+            opts = opts || {};
+            var headers = new Headers(opts.headers || {});
+            if (!headers.has('Content-Type')) headers.set('Content-Type', 'application/json');
+            var t = localStorage.getItem(TOKEN_KEY);
+            if (t) headers.set('Authorization', 'Bearer ' + t);
+            var merged = {};
+            for (var k in opts) {
+                if (Object.prototype.hasOwnProperty.call(opts, k)) merged[k] = opts[k];
+            }
+            merged.headers = headers;
+            return fetch(url, merged);
+        }
+
+        function fileExists(url) {
+            return fetch(url, {
+                    method: 'HEAD',
+                    cache: 'no-store'
+                })
+                .then(function(r) {
+                    return r.status === 200 || r.status === 304;
+                })
+                .catch(function() {
+                    return false;
+                });
+        }
+
+        function resolveRouteForRole(rol) {
+            rol = (rol || '').toLowerCase();
+            var list = [];
+            if (PREFERRED_BY_ROLE[rol]) list = list.concat(PREFERRED_BY_ROLE[rol]);
+
+            // Fallbacks genéricos (por si acaso no están en PREFERRED_BY_ROLE)
+            list.push('/' + rol + '_dashboard.html');
+            list.push('/' + rol + '.html');
+            list = list.concat(FALLBACKS);
+
+            var i = 0;
+
+            function next() {
+                if (i >= list.length) return Promise.resolve(null);
+                var u = list[i++];
+                return fileExists(u).then(function(ok) {
+                    return ok ? u : next();
+                });
+            }
+            return next();
+        }
+
+        /* ========= HELPER: Verificar modo debug ========= */
+        var debugModeCache = null;
+        var debugModeCacheTimestamp = 0;
+        var DEBUG_CACHE_TTL = 2000; // 2 segundos de caché
+
+        function isDebugMode() {
+            try {
+                // Primero intentar desde localStorage (más rápido)
+                var config = localStorage.getItem('crm.config');
+                if (config) {
+                    try {
+                        var parsed = JSON.parse(config);
+                        if (parsed.debugMode !== undefined) {
+                            return parsed.debugMode === true;
+                        }
+                    } catch (e) {
+                        // Si falla el parse, continuar con backend
+                    }
+                }
+                
+                // Si no hay en localStorage o está desactualizado, usar caché en memoria
+                var now = Date.now();
+                if (debugModeCache !== null && (now - debugModeCacheTimestamp) < DEBUG_CACHE_TTL) {
+                    return debugModeCache;
+                }
+                
+                // Si no hay caché válido, retornar false por defecto
+                // La configuración se cargará desde el backend en checkHealth()
+                return false;
+            } catch (e) {
+                console.error('[isDebugMode] Error al leer configuración:', e);
+                return false;
+            }
+        }
+
+        /* ========= HELPER: Cargar modo debug desde backend ========= */
+        async function loadDebugModeFromBackend() {
+            try {
+                var response = await fetch(API_BASE + '/config/debug', {
+                    method: 'GET',
+                    cache: 'no-store'
+                });
+                
+                if (response.ok) {
+                    var data = await response.json();
+                    if (data.enabled !== undefined) {
+                        debugModeCache = data.enabled === true;
+                        debugModeCacheTimestamp = Date.now();
+                        
+                        // Sincronizar con localStorage
+                        var config = { debugMode: debugModeCache };
+                        localStorage.setItem('crm.config', JSON.stringify(config));
+                        
+                        console.log('[Login] Modo debug cargado desde backend:', debugModeCache);
+                        return debugModeCache;
+                    }
+                }
+            } catch (e) {
+                console.warn('[Login] Error al cargar modo debug desde backend:', e);
+            }
+            return false;
+        }
+
+        /* ========= HEALTH AL CARGAR ========= */
+        async function checkHealth() {
+            // Cargar modo debug desde backend primero
+            var debugEnabled = await loadDebugModeFromBackend();
+            console.log('[Login Health] Modo debug (desde backend):', debugEnabled);
+            
+            // Solo verificar health si el modo debug está activado
+            if (!debugEnabled) {
+                // Si el modo debug no está activado, ocultar el elemento de estado
+                if (apiStatus) {
+                    apiStatus.classList.add('hidden');
+                    console.log('[Login Health] Modo debug desactivado, ocultando elemento');
+                }
+                return;
+            }
+
+            // Si el modo debug está activado, asegurarse de que el elemento sea visible
+            if (apiStatus) {
+                apiStatus.classList.remove('hidden');
+                console.log('[Login Health] Modo debug activado, mostrando elemento');
+            } else {
+                console.error('[Login Health] apiStatus no está disponible');
+                return;
+            }
+
+            console.log('[Login Health] Verificando conexión con API...');
+            fetch(API_BASE + '/auth/health', {
+                    cache: 'no-store'
+                })
+                .then(function(r) {
+                    console.log('[Login Health] Respuesta de API:', r.status, r.ok);
+                    if (r.ok || r.status === 304) {
+                        flashStatus(apiStatus, 'ok', '✅ API conectada');
+                        console.log('[Login Health] Mensaje mostrado: API conectada');
+                    } else {
+                        flashStatus(apiStatus, 'bad', '⚠️ API respondió ' + r.status);
+                        console.log('[Login Health] Mensaje mostrado: API respondió', r.status);
+                    }
+                })
+                .catch(function(err) {
+                    console.error('[Login Health] Error al verificar API:', err);
+                    flashStatus(apiStatus, 'bad', '⚠️ No se pudo conectar con la API');
+                });
+        }
+
+        // Ejecutar al cargar
+        checkHealth();
+
+        // Sincronizar periódicamente cada 5 segundos para detectar cambios
+        setInterval(function() {
+            loadDebugModeFromBackend().then(function(enabled) {
+                if (enabled && apiStatus && apiStatus.classList.contains('hidden')) {
+                    // Si se activó el modo debug, mostrar el elemento y verificar health
+                    apiStatus.classList.remove('hidden');
+                    checkHealth();
+                } else if (!enabled && apiStatus && !apiStatus.classList.contains('hidden')) {
+                    // Si se desactivó el modo debug, ocultar el elemento
+                    apiStatus.classList.add('hidden');
+                }
+            });
+        }, 5000);
+
+        /* ========= LOGIN SUBMIT ========= */
+        if (loginForm) {
+            loginForm.addEventListener('submit', function(ev) {
+                ev.preventDefault();
+                if (msg) msg.classList.add('hidden');
+                setBtnLoading(true);
+
+                var email = $('email') ? $('email').value.trim() : '';
+                var password = $('password') ? $('password').value : '';
+
+                /* 1) LOGIN */
+                fetch(API_BASE + '/auth/login', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            email: email,
+                            password: password
+                        })
+                    })
+                    .then(function(res) {
+                        if (!res.ok) return safeMessage(res, 'Credenciales inválidas').then(function(t) {
+                            throw new Error(t);
+                        });
+                        return res.json();
+                    })
+                    .then(function(data) {
+                        var token = data && data.access_token ? data.access_token : null;
+                        if (!token) throw new Error('Token no recibido');
+                        localStorage.setItem(TOKEN_KEY, token);
+
+                        /* 2) ME (IMPORTANTE: SIEMPRE /api/auth/me) */
+                        return bearerFetch(API_BASE + '/auth/me', {
+                            cache: 'no-store'
+                        });
+                    })
+                    .then(function(meRes) {
+                        if (!meRes.ok) return safeMessage(meRes, 'No se pudo obtener el perfil').then(function(t) {
+                            throw new Error(t);
+                        });
+                        return meRes.json();
+                    })
+                    .then(function(me) {
+                        var nombre = (me && me.nombre_completo) ? me.nombre_completo.split(' ')[0] : (me && me.email ? me.email : '');
+                        var rol = (me && me.rol) ? me.rol : ''; //
+                        if (msg) flashStatus(msg, 'ok', '✅ Bienvenido, ' + nombre + '. Redirigiendo…');
+
+                        /* 3) Resolver ruta real según tu árbol */
+                        return resolveRouteForRole(rol).then(function(dest) {
+                            if (!dest) throw new Error('No encontré dashboard para el rol "' + rol + '".');
+                            setTimeout(function() {
+                                window.location.href = dest;
+                            }, 250);
+                        });
+                    })
+                    .catch(function(err) {
+                        if (msg) flashStatus(msg, 'bad', '❌ ' + (err && err.message ? err.message : 'Error de conexión'));
+                    })
+                    .finally(function() {
+                        /* Siempre quitamos el “cargando” */
+                        setTimeout(function() {
+                            setBtnLoading(false);
+                        }, 400);
+                    });
+            });
+        }
+
+        /* ========= AUTO-FORWARD SI YA HAY TOKEN ========= */
+        (function autoForward() {
+            var t = localStorage.getItem(TOKEN_KEY);
+            if (!t) return;
+            bearerFetch(API_BASE + '/auth/me', {
+                    cache: 'no-store'
+                })
+                .then(function(r) {
+                    return (r.ok || r.status === 304) ? r.json() : null;
+                })
+                .then(function(me) {
+                    if (!me) return null;
+                    return resolveRouteForRole(me.rol);
+                })
+                .then(function(dest) {
+                    if (dest) window.location.href = dest;
+                })
+                .catch(function() {});
+        })();
+    </script>
+
+</body>
+
+</html>
