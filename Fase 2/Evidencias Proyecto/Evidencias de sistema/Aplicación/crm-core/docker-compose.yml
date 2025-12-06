@@ -1,137 +1,127 @@
 version: "3.9"
 
-name: ${PROJECT_NAME}
-
 services:
   postgres:
-    image: postgres:15
-    container_name: ${PROJECT_NAME}-postgres
-    restart: unless-stopped
+    image: postgres:16
     environment:
+      POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
-      TZ: ${TZ}
-    ports:
-      - "${POSTGRES_PORT}:5432"
     volumes:
-      - pgdata:/var/lib/postgresql/data
-      - ./docker/postgres/initdb:/docker-entrypoint-initdb.d:ro
+      - dbdata:/var/lib/postgresql/data
+      - ./docker/postgres/initdb:/docker-entrypoint-initdb.d
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "${POSTGRES_USER}"]
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}" ]
       interval: 5s
       timeout: 3s
       retries: 20
-
-  redis:
-    image: redis:7-alpine
-    container_name: ${PROJECT_NAME}-redis
-    restart: unless-stopped
-    ports:
-      - "${REDIS_PORT}:6379"
-    command: ["redis-server", "--save", "", "--appendonly", "no"]
-
-  minio:
-    image: minio/minio:latest
-    container_name: ${PROJECT_NAME}-minio
-    restart: unless-stopped
-    environment:
-      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
-      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
-      TZ: ${TZ}
-    command: server /data --console-address ":${MINIO_CONSOLE_PORT}"
-    ports:
-      - "${MINIO_PORT}:9000"
-      - "${MINIO_CONSOLE_PORT}:9001"
-    volumes:
-      - minio:/data
-
-  minio-init:
-    image: minio/mc:latest
-    container_name: ${PROJECT_NAME}-minio-init
-    depends_on:
-      - minio
-    entrypoint: ["/bin/sh","-c"]
-    command: >
-      "
-      mc alias set local http://minio:9000 ${MINIO_ROOT_USER} ${MINIO_ROOT_PASSWORD} &&
-      mc mb -p local/${MINIO_BUCKET} || true &&
-      mc anonymous set none local/${MINIO_BUCKET}
-      "
-    restart: "no"
 
   api:
     build:
       context: ./apps/api
       dockerfile: Dockerfile
-    container_name: ${PROJECT_NAME}-api
-    restart: unless-stopped
-    env_file:
-      - .env
     environment:
-      DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
-      REDIS_URL: redis://redis:6379
-      MINIO_ENDPOINT: http://minio:9000
-      MINIO_BUCKET: ${MINIO_BUCKET}
+      DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:${POSTGRES_PORT}/${POSTGRES_DB}
+      PORT: ${API_PORT}
       JWT_SECRET: ${JWT_SECRET}
-      TZ: ${TZ}
-    ports:
-      - "${API_PORT}:3000"
+      NODE_ENV: ${NODE_ENV}
+      MINIO_ENDPOINT: http://minio:9000
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+      MINIO_BUCKET: ${MINIO_BUCKET}
+      MINIO_PRESIGN_BASE: ${MINIO_PRESIGN_BASE}
     depends_on:
       postgres:
         condition: service_healthy
-      redis:
-        condition: service_started
-      minio:
-        condition: service_started
+    expose:
+      - "${API_PORT}"
+
+  nginx:
+    image: nginx:alpine
+    volumes:
+      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./docker/nginx/static:/usr/share/nginx/html:ro
+    depends_on:
+      - api
+    ports:
+      - "${NGINX_HTTP_PORT:-8080}:8080"
+
+  redis:
+    image: "redis:alpine"
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    volumes:
+      - redisdata:/data
+
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      # Credenciales para iniciar sesión en la interfaz web de pgAdmin
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL:-admin@example.com}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD:-admin}
+      # Desactivar modo "Maestro" de contraseña (más fácil para desarrollo)
+      PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: "False"
+    ports:
+      # Accede a pgAdmin en http://localhost:5050
+      - "5050:80"
+    volumes:
+      - pgadmindata:/var/lib/pgadmin
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
 
   worker:
     build:
       context: ./apps/worker
       dockerfile: Dockerfile
-    container_name: ${PROJECT_NAME}-worker
-    restart: unless-stopped
-    env_file:
-      - .env
     environment:
-      DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
-      REDIS_URL: redis://redis:6379
-      MINIO_ENDPOINT: http://minio:9000
-      MINIO_BUCKET: ${MINIO_BUCKET}
-      TZ: ${TZ}
+      DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:${POSTGRES_PORT}/${POSTGRES_DB}
+      NODE_ENV: ${NODE_ENV}
     depends_on:
       postgres:
         condition: service_healthy
-      redis:
-        condition: service_started
-      minio:
-        condition: service_started
 
-  ia:
-    build:
-      context: ./apps/ia
-      dockerfile: Dockerfile
-    container_name: ${PROJECT_NAME}-ia
-    restart: unless-stopped
-    env_file:
-      - .env
+  minio:
+    image: minio/minio:latest
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+    command: server /data --console-address ":9001"
     ports:
-      - "${IA_PORT}:8000"
-
-  proxy:
-    image: nginx:1.27-alpine
-    container_name: ${PROJECT_NAME}-proxy
-    depends_on:
-      - api
-      - ia
-      - minio
-    ports:
-      - "${NGINX_HTTP_PORT}:80"
+      - "${MINIO_PORT:-9000}:9000"
+      - "${MINIO_CONSOLE_PORT:-9001}:9001"
     volumes:
-      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./docker/nginx/static:/usr/share/nginx/html:ro
-    restart: unless-stopped
+      - miniodata:/data
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:9000/minio/health/live" ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  minio-init:
+    image: minio/mc:latest
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+      MINIO_BUCKET: ${MINIO_BUCKET:-crm-archivos}
+    entrypoint: /bin/sh
+    command: >
+      -c "
+        /usr/bin/mc alias set local http://minio:9000 $${MINIO_ROOT_USER} $${MINIO_ROOT_PASSWORD} &&
+        /usr/bin/mc mb --ignore-existing local/$${MINIO_BUCKET}
+      "
+    depends_on:
+      minio:
+        condition: service_healthy
 
 volumes:
-  pgdata:
-  minio:
+  dbdata:
+  redisdata:
+  pgadmindata:
+  miniodata:

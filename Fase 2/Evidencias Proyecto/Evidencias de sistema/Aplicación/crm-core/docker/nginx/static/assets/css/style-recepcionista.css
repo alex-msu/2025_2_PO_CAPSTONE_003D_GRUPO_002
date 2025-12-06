@@ -1,0 +1,1238 @@
+/* Variables específicas para recepción */
+
+:root {
+    --recepcion-primary: #6f42c1;
+    --recepcion-secondary: #8B5FBF;
+    --recepcion-light: #f8f7fc;
+    --recepcion-dark: #4a3768;
+    --primary: #004B93;
+    --secondary: #FFC72C;
+    --success: #28a745;
+    --warning: #ffc107;
+    --danger: #dc3545;
+    --light: #f8f9fa;
+    --dark: #343a40;
+}
+
+
+/* Estilos base */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: #f5f7fa;
+    color: #333;
+    line-height: 1.6;
+}
+
+
+/* --- Header --- */
+
+.header {
+    background: white;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 15px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo h1 {
+    color: var(--primary);
+    font-size: 22px;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.user-role {
+    background: var(--recepcion-primary);
+    color: white;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+
+/* --- Nav --- */
+
+.nav-container {
+    background: var(--primary);
+}
+
+.nav-menu {
+    display: flex;
+    list-style: none;
+    padding: 0 30px;
+}
+
+.nav-menu li {
+    position: relative;
+}
+
+.nav-menu a {
+    color: white;
+    text-decoration: none;
+    padding: 15px 20px;
+    display: block;
+    font-weight: 500;
+    transition: background 0.3s;
+}
+
+.nav-menu a:hover,
+.nav-menu a.active {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+
+/* --- Contenido Principal --- */
+
+.main-content {
+    padding: 30px;
+    min-height: calc(100vh - 140px);
+}
+
+.page-title {
+    margin-bottom: 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.page-title h2 {
+    color: var(--primary);
+    font-size: 24px;
+}
+
+
+/* --- Stats Cards --- */
+
+.card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.card {
+    background: #fff;
+    border-radius: 10px;
+    padding: 25px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+    border-left: 4px solid var(--recepcion-primary);
+}
+
+.card h3 {
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 10px;
+}
+
+.card p {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--dark);
+}
+
+
+/* --- Agenda List --- */
+
+.agenda-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.agenda-item {
+    display: flex;
+    align-items: center;
+    background: #fff;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    border-left: 4px solid var(--primary);
+    gap: 20px;
+}
+
+.agenda-date {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 60px;
+    padding: 10px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.agenda-date__day {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--primary);
+    line-height: 1;
+}
+
+.agenda-date__month {
+    font-size: 12px;
+    color: #666;
+    text-transform: uppercase;
+    margin-top: 4px;
+}
+
+.agenda-info {
+    flex: 1;
+}
+
+.agenda-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 8px;
+}
+
+.agenda-meta {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 4px;
+    line-height: 1.4;
+}
+
+.agenda-tags {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.agenda-tag {
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.agenda-tag--urgent {
+    background: #ffebee;
+    color: #d32f2f;
+}
+
+.agenda-tag--late {
+    background: #fff8e1;
+    color: #ff8f00;
+}
+
+.agenda-actions {
+    display: flex;
+    align-items: center;
+}
+
+
+/* --- Workshop List --- */
+
+.workshop-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.workshop-item {
+    background: #fff;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    border-left: 4px solid var(--success);
+}
+
+.workshop-item__title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.workshop-item__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 10px;
+}
+
+.workshop-item__meta span {
+    font-size: 14px;
+    color: #666;
+}
+
+.workshop-item__status {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.workshop-item__actions {
+    margin-top: 12px;
+}
+
+
+/* --- Card Headers --- */
+
+.card-header {
+    padding: 20px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.card-header h3 {
+    font-size: 18px;
+    color: #333;
+    margin: 0;
+}
+
+.card-subtitle {
+    font-size: 14px;
+    color: #666;
+    margin-top: 4px;
+}
+
+.workshop-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+
+/* --- Estados vacíos --- */
+
+.empty-state {
+    padding: 40px 20px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    text-align: center;
+    color: #666;
+    font-style: italic;
+}
+
+
+/* --- Botones --- */
+
+.btn {
+    padding: 10px 20px;
+    border: 0;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 15px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-primary {
+    background-color: var(--primary);
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #003366;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background-color: #545b62;
+}
+
+.btn-warning {
+    background-color: #f0f0f0;
+    color: #333;
+}
+
+.btn-warning:hover {
+    background-color: #e0e0e0;
+}
+
+.btn-danger {
+    background-color: var(--danger);
+    color: white;
+}
+
+.btn-danger:hover {
+    background-color: #a71d2a;
+}
+
+.btn-success {
+    background-color: var(--success);
+    color: white;
+}
+
+.btn-success:hover {
+    background-color: #1e7e34;
+}
+
+.btn-sm {
+    padding: 8px 15px;
+    font-size: 14px;
+}
+
+
+/* --- Status Messages --- */
+
+.status {
+    padding: 15px;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 500;
+    border: 1px solid transparent;
+    margin-bottom: 20px;
+    display: block;
+}
+
+.status.hidden {
+    display: none;
+}
+
+.status.ok {
+    background: #ecfdf5;
+    color: #065f46;
+    border-color: #a7f3d0;
+}
+
+.status.bad {
+    background: #fef2f2;
+    color: #991b1b;
+    border-color: #fecaca;
+}
+
+
+/* --- Status Badges --- */
+
+.status-badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.status-pendiente {
+    background: #fff3e0;
+    color: #ef6c00;
+}
+
+.status-proceso {
+    background: #e3f2fd;
+    color: #1565c0;
+}
+
+.status-completado {
+    background: #e8f5e9;
+    color: #2e7d32;
+}
+
+.status-aprobacion {
+    background: #f3e5f5;
+    color: #7b1fa2;
+}
+
+
+/* --- Modales --- */
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(5px);
+    animation: fadeIn 0.3s ease;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal.is-active {
+    display: flex;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.modal-content {
+    background-color: #ffffff;
+    border: 0;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 600px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    animation: zoomIn 0.3s ease;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+@keyframes zoomIn {
+    from {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.modal-header {
+    padding: 20px 25px;
+    background: var(--primary);
+    color: white;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    border-bottom: 4px solid var(--secondary);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h3 {
+    margin: 0;
+    font-size: 20px;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    opacity: 0.8;
+}
+
+.close-btn:hover {
+    opacity: 1;
+}
+
+
+/* --- Formularios en Modales --- */
+
+.modal-content form {
+    padding: 25px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #333;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 15px;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--recepcion-primary);
+    box-shadow: 0 0 0 3px rgba(111, 66, 193, 0.1);
+}
+
+.form-hint {
+    font-size: 12px;
+    color: #666;
+    margin-top: 6px;
+}
+
+
+/* --- Checkin Summary --- */
+
+.checkin-summary {
+    background: #f8f7fc;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-left: 4px solid var(--recepcion-primary);
+}
+
+.summary-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.summary-item:last-child {
+    border-bottom: none;
+}
+
+.summary-label {
+    font-weight: 600;
+    color: #666;
+}
+
+.summary-value {
+    font-weight: 600;
+    color: #333;
+}
+
+
+/* --- Checklist (check-in recepcionista) --- */
+
+.checklist-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 12px;
+    margin: 15px 0;
+}
+
+.checklist-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 14px;
+    background: #f8f9fa;
+    border-radius: 10px;
+    border: 1px solid #e2e6ea;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
+    transition: all 0.18s ease;
+    cursor: pointer;
+}
+
+.checklist-item:hover {
+    background: #eef2ff;
+    border-color: var(--recepcion-primary);
+    box-shadow: 0 4px 10px rgba(15, 23, 42, 0.12);
+}
+
+.checklist-item input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    margin-top: 3px;
+    accent-color: var(--recepcion-primary);
+}
+
+.checklist-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.checklist-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #222;
+}
+
+.checklist-subtitle {
+    font-size: 12px;
+    color: #6b7280;
+}
+
+/* Estado visual cuando está marcado */
+.checklist-item input[type="checkbox"]:checked ~ .checklist-content {
+    background: #ecfdf5;
+    border-radius: 8px;
+    padding: 4px 8px;
+    border-left: 3px solid var(--success);
+}
+
+.checklist-item input[type="checkbox"]:checked ~ .checklist-content .checklist-title {
+    color: #065f46;
+}
+
+/* Toggle "Todo OK" con estado habilitado/deshabilitado */
+.toggle {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    padding: 12px 14px;
+    background: #e8f5e9;
+    border-radius: 8px;
+    margin-top: 15px;
+    border: 1px solid #c8e6c9;
+}
+
+.toggle input[type="checkbox"] {
+    margin-right: 8px;
+    width: 18px;
+    height: 18px;
+    accent-color: var(--success);
+}
+
+.toggle-text {
+    font-weight: 600;
+    color: #2e7d32;
+}
+
+.toggle-hint {
+    font-size: 11px;
+    color: #4b5563;
+}
+
+/* Versión deshabilitada: hasta que no estén todos los docs marcados */
+.toggle.toggle-disabled {
+    background: #f3f4f6;
+    border-color: #e5e7eb;
+    color: #9ca3af;
+}
+
+.toggle.toggle-disabled .toggle-text {
+    color: #6b7280;
+}
+
+.toggle.toggle-disabled .toggle-hint {
+    color: #9ca3af;
+}
+
+
+
+/* --- File List --- */
+
+.file-list {
+    margin-top: 10px;
+    padding-left: 20px;
+}
+
+.file-list li {
+    padding: 5px 0;
+    font-size: 14px;
+    color: #666;
+}
+
+
+/* --- Form Actions --- */
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 10px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+    margin-top: 20px;
+}
+
+
+/* ====== MODAL DE CIERRE DE SESIÓN ====== */
+
+#modalLogout {
+    display: none;
+}
+
+#modalLogout .modal-content {
+    max-width: 400px;
+    text-align: center;
+}
+
+#modalLogout .modal-header {
+    justify-content: center;
+    padding: 25px;
+    background: var(--danger);
+    border-bottom: 4px solid #ff6b6b;
+}
+
+#modalLogout .modal-header h3 {
+    font-size: 22px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    justify-content: center;
+}
+
+#modalLogout .modal-header h3::before {
+    content: "🚪";
+    font-size: 24px;
+}
+
+#modalLogout .close-btn {
+    position: absolute;
+    right: 20px;
+    top: 20px;
+}
+
+#modalLogout .modal-body {
+    padding: 30px 25px;
+}
+
+#modalLogout .modal-body p {
+    font-size: 16px;
+    margin-bottom: 25px;
+    color: #555;
+    line-height: 1.5;
+}
+
+#modalLogout .logout-actions {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+#modalLogout .btn-logout-confirm {
+    background: var(--danger);
+    color: white;
+    padding: 12px 30px;
+    font-size: 16px;
+    min-width: 100px;
+}
+
+#modalLogout .btn-logout-confirm:hover {
+    background: #a71d2a;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+}
+
+#modalLogout .btn-logout-cancel {
+    background: #6c757d;
+    color: white;
+    padding: 12px 30px;
+    font-size: 16px;
+    min-width: 100px;
+}
+
+#modalLogout .btn-logout-cancel:hover {
+    background: #545b62;
+    transform: translateY(-2px);
+}
+
+
+/* --- Utilidades --- */
+
+.hidden {
+    display: none !important;
+}
+
+
+/* --- Responsive --- */
+
+@media (max-width: 768px) {
+    .header {
+        padding: 15px 20px;
+        flex-direction: column;
+        gap: 15px;
+    }
+    .nav-menu {
+        padding: 0 15px;
+        flex-wrap: wrap;
+    }
+    .nav-menu a {
+        padding: 12px 15px;
+        font-size: 14px;
+    }
+    .main-content {
+        padding: 20px;
+    }
+    .card-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    .agenda-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+    .agenda-date {
+        flex-direction: row;
+        gap: 10px;
+        min-width: auto;
+    }
+    .workshop-item__meta {
+        flex-direction: column;
+        gap: 8px;
+    }
+    .modal-content {
+        width: 95%;
+        margin: 20px;
+    }
+    #modalLogout .logout-actions {
+        flex-direction: column;
+        gap: 10px;
+    }
+    #modalLogout .btn-logout-confirm,
+    #modalLogout .btn-logout-cancel {
+        width: 100%;
+    }
+}
+
+/* Estilos para tabs */
+.tab {
+    display: none;
+}
+
+.tab.active {
+    display: block;
+}
+
+/* ============================================================
+   RESPONSIVE RECEPCIONISTA – versión ordenada, limpia y funcional
+   ============================================================ */
+
+/* -----------------------------------------------
+   🟦 TABLETS / PANTALLAS INTERMEDIAS
+   ----------------------------------------------- */
+@media (max-width: 1024px) {
+
+    .header {
+        padding: 12px 20px;
+    }
+
+    .nav-menu {
+        padding: 0 20px;
+    }
+
+    .main-content {
+        padding: 22px 18px;
+    }
+
+    .card-grid {
+        gap: 18px;
+    }
+}
+
+
+/* ============================================================
+   🟧 TELEFONOS (360–430px) — PRINCIPAL PARA RECEPCIONISTA
+   ============================================================ */
+@media (max-width: 768px) {
+
+    /* -----------------------------------------------
+       HEADER: distribuye bien logo + usuario + rol + logout
+       ----------------------------------------------- */
+    .header {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: start;
+        row-gap: 10px;
+        column-gap: 6px;
+        padding: 12px 14px;
+    }
+
+    .header .logo {
+        flex: 1 1 55%;
+    }
+
+    .header .logo h1 {
+        font-size: 18px;
+    }
+
+    .header .user-info {
+        flex: 1 1 45%;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        align-items: center;
+        column-gap: 6px;
+        row-gap: 4px;
+    }
+
+    .header .user-role {
+        font-size: 11px;
+        padding: 4px 10px;
+    }
+
+    #userName {
+        font-size: 14px;
+        font-weight: 600;
+        max-width: 100%;
+        word-break: break-word;
+    }
+
+    .notifications-wrapper {
+        order: 3;
+    }
+
+    #notificationsBtn {
+        font-size: 12px;
+        padding: 6px 10px;
+        margin-right: 0 !important;
+    }
+
+    #btnLogout {
+        order: 4;
+        font-size: 12px;
+        padding: 6px 12px;
+    }
+
+
+    /* -----------------------------------------------
+       NAV – scroll horizontal si no cabe
+       ----------------------------------------------- */
+    .nav-container {
+        overflow-x: auto;
+    }
+
+    .nav-menu {
+        display: flex;
+        flex-wrap: nowrap;
+        gap: 6px;
+        padding: 0 10px;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .nav-menu li {
+        flex: 0 0 auto;
+    }
+
+    .nav-menu a {
+        padding: 10px 12px;
+        font-size: 13px;
+        white-space: nowrap;
+    }
+
+
+    /* -----------------------------------------------
+       CONTENIDO GENERAL
+       ----------------------------------------------- */
+    .main-content {
+        padding: 16px 12px 24px;
+    }
+
+    .page-title {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .page-title h2 {
+        font-size: 20px;
+    }
+
+    .page-title button {
+        width: 100%;
+        min-height: 40px;
+    }
+
+
+    /* -----------------------------------------------
+       CARDS
+       ----------------------------------------------- */
+    .card-grid {
+        grid-template-columns: 1fr;
+        gap: 14px;
+    }
+
+    .card {
+        padding: 18px;
+    }
+
+    .card h3 {
+        font-size: 15px;
+    }
+
+    .card p {
+        font-size: 24px;
+    }
+
+
+    /* -----------------------------------------------
+       LISTAS AGENDA / WORKSHOP
+       ----------------------------------------------- */
+    .agenda-item {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+        padding: 16px;
+    }
+
+    .agenda-date {
+        flex-direction: row;
+        gap: 10px;
+        min-width: auto;
+        padding: 8px 12px;
+    }
+
+    .agenda-info {
+        width: 100%;
+    }
+
+    .agenda-actions {
+        width: 100%;
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    .workshop-item {
+        padding: 16px;
+    }
+
+    .workshop-item__meta {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+
+    /* -----------------------------------------------
+       TABLAS – scroll horizontal
+       ----------------------------------------------- */
+    .table-container,
+    .table-responsive {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    table {
+        min-width: 640px;
+    }
+
+
+    /* -----------------------------------------------
+       FILTROS
+       ----------------------------------------------- */
+    .card > div[style*="grid"] {
+        grid-template-columns: 1fr !important;
+        gap: 12px !important;
+    }
+
+    .card select,
+    .card input {
+        width: 100% !important;
+    }
+
+    .card button {
+        width: 100%;
+    }
+
+
+    /* ============================================================
+       MODALES — versión estable para forms largos (Check-in / Retiro)
+       ============================================================ */
+
+    .modal {
+        padding: 10px;
+        justify-content: center;
+        align-items: flex-start;
+    }
+
+    .modal-content {
+        width: 100%;
+        max-width: 100%;
+        margin: 10px auto;
+        border-radius: 12px;
+        max-height: calc(100vh - 20px);
+        overflow-y: auto;
+    }
+
+    .modal-header {
+        padding: 16px 20px;
+    }
+
+    .modal-header h3 {
+        font-size: 18px;
+    }
+
+    .modal-content form {
+        padding: 16px 20px;
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 14px;
+    }
+
+    .checkin-summary {
+        padding: 14px;
+    }
+
+
+    /* Inputs más compactos para móvil */
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        padding: 10px 12px;
+        font-size: 14px;
+    }
+
+    .form-actions {
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .form-actions button {
+        flex: 1 1 45%;
+        min-height: 40px;
+        font-size: 14px;
+    }
+
+
+    /* -----------------------------------------------
+       NOTIFICACIONES PANEL
+       ----------------------------------------------- */
+    #notificationsPanel {
+        position: absolute;
+        width: 100vw !important;
+        max-width: 100vw !important;
+        left: 50% !important;
+        transform: translateX(-50%);
+        right: auto !important;
+    }
+
+    .notifications-content {
+        max-height: 320px !important;
+    }
+}
+
+
+/* ============================================================
+   ADAPTACIONES PRECISAS PARA 360px
+   ============================================================ */
+@media (max-width: 480px) {
+
+    .header {
+        padding: 10px 10px;
+    }
+
+    .header .logo h1 {
+        font-size: 16px;
+    }
+
+    #notificationsBtn,
+    #btnLogout {
+        padding: 6px 8px;
+        font-size: 11px;
+    }
+
+    .nav-menu a {
+        padding: 8px 10px;
+        font-size: 12px;
+    }
+
+    .modal-header h3 {
+        font-size: 16px;
+    }
+}

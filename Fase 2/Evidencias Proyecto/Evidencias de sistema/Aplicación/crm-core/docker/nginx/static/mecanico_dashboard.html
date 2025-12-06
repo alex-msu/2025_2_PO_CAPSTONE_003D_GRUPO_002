@@ -2,246 +2,11 @@
 <html lang="es">
 
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard Mecánico - CRM Flota PepsiCo</title>
-    <style>
-        /* Estilos base (igual que el dashboard general) */
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
-         :root {
-            --primary: #004B93;
-            --secondary: #FFC72C;
-            --success: #28a745;
-            --warning: #ffc107;
-            --danger: #dc3545;
-            --light: #f8f9fa;
-            --dark: #343a40;
-        }
-        
-        body {
-            background-color: #f5f7fa;
-            color: #333;
-        }
-        
-        .header {
-            background: white;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            padding: 15px 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .logo h1 {
-            color: var(--primary);
-            font-size: 22px;
-        }
-        
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-        
-        .user-role {
-            background: var(--primary);
-            color: white;
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-        
-        .nav-container {
-            background: var(--primary);
-        }
-        
-        .nav-menu {
-            display: flex;
-            list-style: none;
-            padding: 0 30px;
-        }
-        
-        .nav-menu li {
-            position: relative;
-        }
-        
-        .nav-menu a {
-            color: white;
-            text-decoration: none;
-            padding: 15px 20px;
-            display: block;
-            font-weight: 500;
-            transition: background 0.3s;
-        }
-        
-        .nav-menu a:hover,
-        .nav-menu a.active {
-            background: rgba(255, 255, 255, 0.1);
-        }
-        
-        .main-content {
-            padding: 30px;
-            min-height: calc(100vh - 140px);
-        }
-        
-        .page-title {
-            margin-bottom: 25px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .page-title h2 {
-            color: var(--primary);
-            font-size: 24px;
-        }
-        
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-        
-        .stat-card {
-            background: white;
-            border-radius: 8px;
-            padding: 20px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            border-left: 4px solid var(--primary);
-        }
-        
-        .stat-card h3 {
-            font-size: 14px;
-            color: #666;
-            margin-bottom: 10px;
-        }
-        
-        .stat-number {
-            font-size: 28px;
-            font-weight: 700;
-            color: var(--primary);
-        }
-        
-        .table-container {
-            background: white;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            margin-bottom: 30px;
-        }
-        
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        
-        th,
-        td {
-            padding: 15px;
-            text-align: left;
-            border-bottom: 1px solid #eee;
-        }
-        
-        th {
-            background: #f8f9fa;
-            font-weight: 600;
-            color: #555;
-        }
-        
-        .status-badge {
-            padding: 5px 10px;
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-        
-        .status-pendiente {
-            background: #fff3cd;
-            color: #856404;
-        }
-        
-        .status-proceso {
-            background: #cce7ff;
-            color: #004085;
-        }
-        
-        .status-completado {
-            background: #d4edda;
-            color: #155724;
-        }
-        
-        .btn {
-            padding: 8px 16px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 14px;
-            transition: all 0.3s;
-        }
-        
-        .btn-primary {
-            background: var(--primary);
-            color: white;
-        }
-        
-        .btn-success {
-            background: var(--success);
-            color: white;
-        }
-        
-        .btn-warning {
-            background: var(--warning);
-            color: black;
-        }
-        
-        .btn-sm {
-            padding: 5px 10px;
-            font-size: 12px;
-        }
-        
-        .btn:hover {
-            opacity: 0.9;
-            transform: translateY(-1px);
-        }
-        /* Estilos específicos para mecánico */
-        
-        .task-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-        }
-        
-        .task-card {
-            background: white;
-            border-radius: 8px;
-            padding: 20px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            border-left: 4px solid var(--warning);
-        }
-        
-        .task-card h3 {
-            margin-bottom: 10px;
-            color: var(--primary);
-        }
-        
-        .task-card.completed {
-            border-left-color: var(--success);
-        }
-        
-        .task-card.urgent {
-            border-left-color: var(--danger);
-        }
-    </style>
+    <link rel="stylesheet" href="assets/css/style-mecanico.css" />
+    <link rel="stylesheet" href="assets/css/logout_button.css">
 </head>
 
 <body>
@@ -251,144 +16,402 @@
         </div>
         <div class="user-info">
             <span class="user-role">Mecánico</span>
-            <span>Juan Pérez</span>
-            <button class="btn btn-primary" onclick="logout()">Cerrar Sesión</button>
+            <span id="userName">—</span>
+            <div class="notifications-wrapper" style="position: relative;">
+                <button id="notificationsBtn" class="btn btn-secondary" style="position: relative; margin-right: 10px;">
+                    🔔 Notificaciones
+                    <span id="notificationsBadge" class="notification-badge" style="display: none; position: absolute; top: -8px; right: -8px; background: #dc3545; color: white; border-radius: 50%; width: 20px; height: 20px; font-size: 12px; display: flex; align-items: center; justify-content: center; font-weight: bold;">0</span>
+                </button>
+                <div id="notificationsPanel" class="notifications-panel" style="display: none; position: absolute; top: 100%; right: 0; width: 400px; max-height: 500px; background: white; border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 1000; margin-top: 10px;">
+                    <div class="notifications-header" style="padding: 15px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
+                        <h3 style="margin: 0; font-size: 16px;">Notificaciones</h3>
+                        <button onclick="NotificationsManager.markAllAsRead()" class="btn btn-sm btn-secondary" style="font-size: 12px;">Marcar todas como leídas</button>
+                    </div>
+                    <div class="notifications-content" style="max-height: 400px; overflow-y: auto; padding: 10px;">
+                        <div class="notification-empty">Cargando...</div>
+                    </div>
+                </div>
+            </div>
+            <button class="btn btn-primary" id="btnLogout">Cerrar Sesión</button>
         </div>
     </header>
 
     <nav class="nav-container">
         <ul class="nav-menu">
-            <li><a href="#" class="active">Dashboard</a></li>
-            <li><a href="tareas.html">Mis Tareas</a></li>
-            <li><a href="vehiculos.html">Vehículos</a></li>
-            <li><a href="documentos.html">Documentos</a></li>
-            <li><a href="repuestos.html">Repuestos</a></li>
+            <li><a href="#" class="active" data-tab="dashboard">Dashboard</a></li>
+            <li><a href="#" id="navHistorial">Historial</a></li>
+            <li><a href="#" data-tab="stock">Stock</a></li>
         </ul>
     </nav>
 
     <main class="main-content">
+        <!-- Contenedor para notificaciones flotantes -->
+        <div id="notificationsContainer" style="position: fixed; top: 80px; right: 20px; z-index: 10000; max-width: 400px;"></div>
+        
         <div class="page-title">
             <h2>Dashboard Mecánico</h2>
-            <div>
-                <button class="btn btn-primary">Nueva Tarea</button>
-                <button class="btn btn-success">Reportar Avance</button>
-            </div>
+            <button class="btn btn-secondary" id="btnRefreshTasks">Actualizar</button>
         </div>
 
-        <div class="stats-grid">
-            <div class="stat-card">
-                <h3>Tareas Asignadas</h3>
-                <div class="stat-number">5</div>
-            </div>
-            <div class="stat-card">
-                <h3>En Proceso</h3>
-                <div class="stat-number">3</div>
-            </div>
-            <div class="stat-card">
-                <h3>Completadas Hoy</h3>
-                <div class="stat-number">2</div>
-            </div>
-            <div class="stat-card">
-                <h3>Pendientes de Aprobación</h3>
-                <div class="stat-number">1</div>
-            </div>
-        </div>
+        <section class="stats-grid">
+            <article class="stat-card">
+                <h3>Tareas asignadas</h3>
+                <div class="stat-number" id="statAsignadas">—</div>
+            </article>
+            <article class="stat-card">
+                <h3>En proceso</h3>
+                <div class="stat-number" id="statEnProceso">—</div>
+            </article>
+            <article class="stat-card">
+                <h3>En espera de repuestos</h3>
+                <div class="stat-number" id="statEspera">—</div>
+            </article>
+            <article class="stat-card">
+                <h3>Listas para revisión</h3>
+                <div class="stat-number" id="statListas">—</div>
+            </article>
+        </section>
 
-        <div class="page-title">
-            <h3>Mis Tareas Actuales</h3>
-        </div>
+        <section id="tab-dashboard" class="tab">
+            <div class="panel-grid">
+            <article class="panel panel-list">
+                <div class="panel-header">
+                    <div>
+                        <h3>OT asignadas</h3>
+                        <p>Selecciona una orden para ver los detalles y registrar acciones.</p>
+                    </div>
+                </div>
+                <!-- Controles de filtro -->
+                <div class="filters-container" style="padding: 15px; background: #f8f9fa; border-bottom: 1px solid #dee2e6; display: flex; gap: 15px; flex-wrap: wrap; align-items: flex-end;">
+                    <div style="flex: 1; min-width: 150px;">
+                        <label for="filterPatente" style="display: block; margin-bottom: 5px; font-size: 0.9em; font-weight: 500; color: #495057;">Patente</label>
+                        <input type="text" id="filterPatente" placeholder="Buscar por patente..." style="width: 100%; padding: 8px; border: 1px solid #ced4da; border-radius: 4px; font-size: 14px;">
+                    </div>
+                    <div style="flex: 1; min-width: 150px;">
+                        <label for="filterChofer" style="display: block; margin-bottom: 5px; font-size: 0.9em; font-weight: 500; color: #495057;">Chofer</label>
+                        <input type="text" id="filterChofer" placeholder="Buscar por chofer..." style="width: 100%; padding: 8px; border: 1px solid #ced4da; border-radius: 4px; font-size: 14px;">
+                    </div>
+                    <div style="flex: 1; min-width: 150px;">
+                        <label for="filterFecha" style="display: block; margin-bottom: 5px; font-size: 0.9em; font-weight: 500; color: #495057;">Fecha</label>
+                        <input type="date" id="filterFecha" style="width: 100%; padding: 8px; border: 1px solid #ced4da; border-radius: 4px; font-size: 14px;">
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button type="button" id="btnAplicarFiltros" class="btn btn-primary" style="padding: 8px 16px; font-size: 14px;">Filtrar</button>
+                        <button type="button" id="btnLimpiarFiltros" class="btn btn-secondary" style="padding: 8px 16px; font-size: 14px;">Limpiar</button>
+                    </div>
+                </div>
+                <div id="taskList" class="task-list">
+                    <div class="empty-state">Cargando órdenes...</div>
+                </div>
+                <div id="taskListPagination"></div>
+            </article>
 
-        <div class="task-list">
-            <div class="task-card urgent">
-                <h3>Volvo FH16 - BKXL45</h3>
-                <p><strong>Problema:</strong> Falla en motor</p>
-                <p><strong>Prioridad:</strong> Alta</p>
-                <p><strong>Fecha Límite:</strong> 18/11/2025</p>
-                <div style="margin-top: 15px;">
-                    <button class="btn btn-primary btn-sm">Iniciar</button>
-                    <button class="btn btn-warning btn-sm">Solicitar Repuestos</button>
+            <article class="panel panel-detail" id="taskDetail">
+                <div class="empty-state">Selecciona una orden de la lista para ver su información.</div>
+            </article>
+            </div>
+        </section>
+
+        <!-- Sección de Stock (oculta por defecto, se muestra al hacer clic en nav-item Stock) -->
+        <section id="tab-stock" class="tab" style="display: none;">
+            <div class="page-title">
+                <h2>Stock de Repuestos</h2>
+                <div class="quick-actions">
+                    <button class="btn btn-success" onclick="stockMecanicoReload()">Actualizar</button>
                 </div>
             </div>
 
-            <div class="task-card">
-                <h3>Mercedes Actros - AFGH78</h3>
-                <p><strong>Problema:</strong> Cambio de neumáticos</p>
-                <p><strong>Prioridad:</strong> Media</p>
-                <p><strong>Fecha Límite:</strong> 20/11/2025</p>
-                <div style="margin-top: 15px;">
-                    <button class="btn btn-primary btn-sm">Iniciar</button>
-                    <button class="btn btn-warning btn-sm">Solicitar Repuestos</button>
+            <div class="stats-grid" style="margin-bottom: 30px;">
+                <div class="stat-card">
+                    <h3 class="stat-number" id="stock-total-repuestos-mec">...</h3>
+                    <p>Total Repuestos</p>
+                </div>
+                <div class="stat-card">
+                    <h3 class="stat-number" id="stock-bajo-mec">...</h3>
+                    <p>Stock Bajo</p>
+                </div>
+                <div class="stat-card">
+                    <h3 class="stat-number" id="stock-critico-mec">...</h3>
+                    <p>Stock Crítico</p>
                 </div>
             </div>
 
-            <div class="task-card completed">
-                <h3>Scania R500 - CDJK23</h3>
-                <p><strong>Problema:</strong> Revisión general</p>
-                <p><strong>Prioridad:</strong> Baja</p>
-                <p><strong>Estado:</strong> Completado</p>
-                <div style="margin-top: 15px;">
-                    <button class="btn btn-success btn-sm">Ver Detalle</button>
-                    <button class="btn btn-primary btn-sm">Documentar</button>
-                </div>
+            <div class="table-container">
+                <h3 style="padding: 20px 25px; background:#f8f9fa; border-bottom:1px solid #eee;">Inventario Actual</h3>
+                <table id="stockMecanicoTabla">
+                    <thead>
+                        <tr>
+                            <th>SKU</th>
+                            <th>Repuesto</th>
+                            <th>Stock Actual</th>
+                            <th>Mínimo</th>
+                            <th>Máximo</th>
+                            <th>Ubicación</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody id="stockMecanicoTBody">
+                        <tr><td colspan="7" style="text-align:center;padding:20px;">Cargando...</td></tr>
+                    </tbody>
+                </table>
             </div>
-        </div>
-
-        <div class="table-container" style="margin-top: 30px;">
-            <h3 style="padding: 15px; background: #f8f9fa; border-bottom: 1px solid #eee;">Historial de Tareas Recientes</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Vehículo</th>
-                        <th>Tarea</th>
-                        <th>Fecha Inicio</th>
-                        <th>Fecha Fin</th>
-                        <th>Estado</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Volvo FH16 - BKXL45</td>
-                        <td>Reparación motor</td>
-                        <td>15/11/2025</td>
-                        <td>-</td>
-                        <td><span class="status-badge status-proceso">En Proceso</span></td>
-                        <td>
-                            <button class="btn btn-primary btn-sm">Continuar</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Scania R500 - CDJK23</td>
-                        <td>Revisión general</td>
-                        <td>13/11/2025</td>
-                        <td>14/11/2025</td>
-                        <td><span class="status-badge status-completado">Completado</span></td>
-                        <td>
-                            <button class="btn btn-primary btn-sm">Ver</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>MAN TGX - XYZW12</td>
-                        <td>Cambio de frenos</td>
-                        <td>10/11/2025</td>
-                        <td>12/11/2025</td>
-                        <td><span class="status-badge status-completado">Completado</span></td>
-                        <td>
-                            <button class="btn btn-primary btn-sm">Ver</button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+        </section>
     </main>
 
-    <script>
-        function logout() {
-            if (confirm('¿Está seguro de que desea cerrar sesión?')) {
-                window.location.href = 'login.html';
-            }
-        }
-    </script>
+    <div class="modal" id="modalDiagnostic" aria-hidden="true">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Iniciar diagnóstico</h3>
+                <button class="close-btn" onclick="closeDiagnosticModal()">&times;</button>
+            </div>
+            <form id="diagnosticForm">
+                <input type="hidden" id="diagnostic_task_id" />
+                <div class="form-info">
+                    <p><strong>OT:</strong> <span id="diagnostic_ot_label">—</span></p>
+                    <p><strong>Vehículo:</strong> <span id="diagnostic_vehicle_label">—</span></p>
+                </div>
+
+                <div class="form-group">
+                    <label for="diagnostic_fecha_inicio">Fecha y hora de inicio real (*)</label>
+                    <input type="datetime-local" id="diagnostic_fecha_inicio" required />
+                    <div class="form-hint">Usamos esta fecha para registrar el inicio del trabajo y actualizar la OT.</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="diagnostic_inicial">Diagnóstico Inicial (*)</label>
+                    <textarea id="diagnostic_inicial" rows="4" placeholder="Describe el diagnóstico inicial del problema..." required></textarea>
+                    <div class="form-hint">Describe los hallazgos y el diagnóstico realizado.</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Discrepancia (*)</label>
+                    <div class="radio-group">
+                        <label class="radio-item">
+                            <input type="radio" name="diagnostic_discrepancia" value="no" checked>
+                            <span>No</span>
+                        </label>
+                        <label class="radio-item">
+                            <input type="radio" name="diagnostic_discrepancia" value="si">
+                            <span>Sí</span>
+                        </label>
+                    </div>
+                    <div class="form-hint">¿Hay discrepancia entre tu diagnóstico y el reporte inicial del cliente/conductor?</div>
+                </div>
+
+                <div class="form-group" id="diagnostic_discrepancia_detalle_group" style="display: none;">
+                    <label for="diagnostic_discrepancia_detalle">Detalle Discrepancia (*)</label>
+                    <textarea id="diagnostic_discrepancia_detalle" rows="3" placeholder="Explica la diferencia con el reporte inicial..."></textarea>
+                    <div class="form-hint">Describe las diferencias encontradas respecto al reporte inicial.</div>
+                </div>
+
+                <div class="form-group" id="diagnostic_prioridad_group" style="display: none;">
+                    <label for="diagnostic_prioridad">Prioridad Diagnosticada (*)</label>
+                    <select id="diagnostic_prioridad">
+                        <option value="BAJA">Baja</option>
+                        <option value="NORMAL" selected>Normal</option>
+                        <option value="ALTA">Alta</option>
+                        <option value="URGENTE">Urgente</option>
+                    </select>
+                    <div class="form-hint">Prioridad basada en el diagnóstico realizado (solo si hay discrepancia).</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Checklist de diagnóstico (*)</label>
+                    <div class="form-hint" style="margin-bottom: 10px;">Debes marcar al menos un item o "Checklist completo" para continuar.</div>
+                    <div class="checklist-grid">
+                        <label class="checklist-item">
+                            <input type="checkbox" id="diag_check_visual" />
+                            Inspección visual
+                        </label>
+                        <label class="checklist-item">
+                            <input type="checkbox" id="diag_check_escaner" />
+                            Escáner electrónico
+                        </label>
+                        <label class="checklist-item">
+                            <input type="checkbox" id="diag_check_prueba" />
+                            Prueba en ruta
+                        </label>
+                        <label class="checklist-item">
+                            <input type="checkbox" id="diag_check_seguridad" />
+                            Sistemas de seguridad
+                        </label>
+                    </div>
+                    <label class="toggle">
+                        <input type="checkbox" id="diag_check_all_ok" />
+                        Checklist completo
+                    </label>
+                </div>
+
+                <div class="form-group">
+                    <label for="diagnostic_evidencias">Evidencias (opcional)</label>
+                    <input type="file" id="diagnostic_evidencias" accept="image/jpeg,image/png,image/webp,application/pdf,text/plain,.jpg,.jpeg,.png,.webp,.pdf,.txt,.doc,.docx" multiple />
+                    <div class="form-hint">Hasta 5 archivos (JPG, PNG, WEBP, PDF, TXT, DOC, DOCX) para respaldar el diagnóstico.</div>
+                    <ul id="diagnostic_evidencias_list" class="file-list"></ul>
+                </div>
+
+                <div class="form-group">
+                    <label for="diagnostic_notas">Notas adicionales (opcional)</label>
+                    <textarea id="diagnostic_notas" rows="2" placeholder="Notas adicionales o comentarios..."></textarea>
+                </div>
+
+            <div class="form-actions">
+                <span id="diagnosticMsg" class="status hidden"></span>
+                <button type="button" class="btn btn-secondary" onclick="closeDiagnosticModal()">Cancelar</button>
+                <button type="submit" class="btn btn-primary">Registrar inicio</button>
+            </div>
+            </form>
+        </div>
+    </div>
+
+        <!-- Modal genérico de confirmación de acción -->
+    <div class="modal" id="modalConfirmAction" aria-hidden="true">
+        <div class="modal-content modal-confirm">
+            <div class="modal-header">
+                <h3 id="confirmActionTitle">Confirmar acción</h3>
+                <button class="close-btn" onclick="closeConfirmActionModal()">&times;</button>
+            </div>
+            <div class="modal-body" style="padding: 20px 24px;">
+                <p id="confirmActionMessage" class="confirm-message">
+                    <!-- Mensaje dinámico -->
+                </p>
+            </div>
+            <div class="form-actions" style="padding: 0 24px 20px 24px;">
+                <div style="margin-left: auto; display: flex; gap: 10px;">
+                    <button type="button" class="btn btn-secondary" id="confirmActionCancelBtn">
+                        Cancelar
+                    </button>
+                    <button type="button" class="btn btn-primary" id="confirmActionOkBtn">
+                        Confirmar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Solicitar Repuestos -->
+    <div class="modal" id="modalSolicitarRepuestos">
+        <div class="modal-content" style="max-width: 800px;">
+            <div class="modal-header">
+                <h3>Solicitar Repuestos</h3>
+                <button class="close-btn" onclick="closeModal('modalSolicitarRepuestos')">&times;</button>
+            </div>
+            <form id="solicitarRepuestosForm">
+                <input type="hidden" id="sol_rep_ot_id" />
+                <div class="form-info" style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 4px;">
+                    <p><strong>OT:</strong> <span id="sol_rep_ot_label">—</span></p>
+                    <p><strong>Vehículo:</strong> <span id="sol_rep_vehiculo_label">—</span></p>
+                </div>
+                
+                <div class="form-group">
+                    <label>Repuestos a Solicitar</label>
+                    <div id="repuestosListContainer" style="margin-bottom: 15px;">
+                        <!-- Las filas de repuestos se agregarán aquí dinámicamente -->
+                    </div>
+                    <button type="button" class="btn btn-sm btn-secondary" id="btnAgregarRepuesto" style="margin-bottom: 15px;">
+                        + Agregar Repuesto
+                    </button>
+                </div>
+                
+                <div class="form-group">
+                    <label for="sol_rep_comentarios">Comentarios Generales (opcional)</label>
+                    <textarea id="sol_rep_comentarios" rows="3" placeholder="Información adicional sobre la solicitud..."></textarea>
+                </div>
+                
+                <div class="form-actions">
+                    <span id="solRepMsg" class="status hidden"></span>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('modalSolicitarRepuestos')">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Enviar Solicitudes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Confirmar Recepción de Repuestos -->
+    <div class="modal" id="modalConfirmarRecepcion" aria-hidden="true">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Confirmar Recepción de Repuestos</h3>
+                <button class="close-btn" onclick="closeModal('modalConfirmarRecepcion')">&times;</button>
+            </div>
+            <div style="padding: 20px;">
+                <p>¿Confirmas que has recibido los siguientes repuestos?</p>
+                <div id="recepcionRepuestosList" style="margin: 20px 0;">
+                    <!-- Se llenará dinámicamente -->
+                </div>
+                <div class="form-actions" style="border-top: none; padding-top: 20px;">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('modalConfirmarRecepcion')">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="btnConfirmarRecepcion">Confirmar Recepción</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Historial de OTs -->
+    <div class="modal" id="modalHistorial" aria-hidden="true" style="display: none;">
+        <div class="modal-content" style="max-width: 95%; max-height: 90vh; overflow-y: auto;">
+            <div class="modal-header">
+                <h3>Historial de Órdenes de Trabajo</h3>
+                <button class="close-btn" onclick="closeHistorialModal()">&times;</button>
+            </div>
+            <div style="padding: 20px;">
+                <div id="historialContainer" style="min-height: 400px;">
+                    <!-- HistoryViewer se inicializará aquí -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Cierre de Trabajo -->
+    <div class="modal" id="modalCierreTrabajo" aria-hidden="true">
+        <div class="modal-content" style="max-width: 700px;">
+            <div class="modal-header">
+                <h3>Cierre de Trabajo</h3>
+                <button class="close-btn" onclick="closeModal('modalCierreTrabajo')">&times;</button>
+            </div>
+            <form id="cierreTrabajoForm">
+                <input type="hidden" id="cierre_task_id" />
+                <div class="form-info">
+                    <p><strong>OT:</strong> <span id="cierre_ot_label">—</span></p>
+                    <p><strong>Vehículo:</strong> <span id="cierre_vehicle_label">—</span></p>
+                </div>
+
+                <div class="form-group">
+                    <label for="cierre_descripcion">Descripción del Proceso Realizado (*)</label>
+                    <textarea id="cierre_descripcion" rows="6" placeholder="Describe detalladamente el proceso realizado, las reparaciones efectuadas, y cualquier observación relevante..." required></textarea>
+                    <div class="form-hint">Este campo es obligatorio. Describe el trabajo realizado de manera clara y completa.</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="cierre_evidencias">Adjuntar Evidencia (opcional)</label>
+                    <input type="file" id="cierre_evidencias" accept="image/jpeg,image/png,image/webp,application/pdf,text/plain,.jpg,.jpeg,.png,.webp,.pdf,.txt,.doc,.docx" multiple />
+                    <div class="form-hint">Puedes adjuntar archivos que respalden el trabajo realizado (máximo 10). Formatos: JPG, PNG, WEBP, PDF, TXT, DOC, DOCX.</div>
+                    <ul id="cierre_evidencias_list" class="file-list"></ul>
+                </div>
+
+                <div class="form-actions">
+                    <span id="cierreMsg" class="status hidden"></span>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('modalCierreTrabajo')">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Enviar para Verificación</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Módulo de autenticación (debe cargarse primero) -->
+    <script src="assets/js/auth.js"></script>
+    <script src="assets/js/offline-handler.js"></script>
+    <script src="assets/js/validations.js"></script>
+    <script src="assets/js/file-utils.js"></script>
+    <script src="assets/js/pagination.js"></script>
+    <script src="assets/js/filters-search.js"></script>
+    <script src="assets/js/history-viewer.js"></script>
+    <script src="assets/js/auth.js"></script>
+    <script src="assets/js/logout_button.js"></script>
+    <script src="assets/js/error-handler.js"></script>
+    <script src="assets/js/loading-utils.js"></script>
+    <script src="assets/js/notifications-manager.js"></script>
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js" crossorigin="anonymous"></script>
+    <script src="assets/js/mecanico_dashboard.js" defer></script>
 </body>
 
 </html>

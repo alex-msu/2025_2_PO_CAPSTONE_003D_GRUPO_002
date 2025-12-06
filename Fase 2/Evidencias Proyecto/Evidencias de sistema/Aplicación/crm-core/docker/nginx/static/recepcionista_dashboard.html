@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard Recepcionista - CRM Flota PepsiCo</title>
+    <link rel="stylesheet" href="assets/css/style-recepcionista.css">
+    <link rel="stylesheet" href="assets/css/logout_button.css">
+</head>
+
+<body>
+    <header class="header">
+        <div class="logo">
+            <h1>CRM Flota PepsiCo</h1>
+        </div>
+        <div class="user-info">
+            <span class="user-role">Recepcionista</span>
+            <span id="userName">Usuario</span>
+            <div class="notifications-wrapper" style="position: relative;">
+                <button id="notificationsBtn" class="btn btn-secondary" style="position: relative; margin-right: 10px;">
+                    🔔 Notificaciones
+                    <span id="notificationsBadge" class="notification-badge"
+                        style="display: none; position: absolute; top: -8px; right: -8px; background: #dc3545; color: white; border-radius: 50%; width: 20px; height: 20px; font-size: 12px; display: flex; align-items: center; justify-content: center; font-weight: bold;">0</span>
+                </button>
+                <div id="notificationsPanel" class="notifications-panel"
+                    style="display: none; position: absolute; top: 100%; right: 0; width: 400px; max-height: 500px; background: white; border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 1000; margin-top: 10px;">
+                    <div class="notifications-header"
+                        style="padding: 15px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
+                        <h3 style="margin: 0; font-size: 16px;">Notificaciones</h3>
+                        <button onclick="NotificationsManager.markAllAsRead()" class="btn btn-sm btn-secondary"
+                            style="font-size: 12px;">Marcar todas como leídas</button>
+                    </div>
+                    <div class="notifications-content" style="max-height: 400px; overflow-y: auto; padding: 10px;">
+                        <ul id="notificationList" style="list-style: none; padding: 0; margin: 0;">
+                            <li class="empty-state">Cargando...</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <button class="btn btn-primary" id="btnLogout">Cerrar Sesión</button>
+        </div>
+    </header>
+
+    <nav class="nav-container">
+        <ul class="nav-menu" id="mainNav">
+            <li><a href="#" class="active" data-tab="inicio">Inicio</a></li>
+            <li><a href="#" data-tab="vehiculos">Vehículos</a></li>
+            <li><a href="#" data-tab="entregas">Entregas</a></li>
+        </ul>
+    </nav>
+
+    <main class="main-content">
+        <!-- Sección Inicio -->
+        <section id="tab-inicio" class="tab active">
+            <div class="page-title">
+                <h2>Agenda de Recepciones</h2>
+                <button class="btn btn-secondary" id="btnAgendaRefresh">Actualizar</button>
+            </div>
+
+            <section class="card-grid">
+                <article class="card">
+                    <h3>Próximas llegadas hoy</h3>
+                    <p id="recepcionesPendientes">–</p>
+                </article>
+                <article class="card">
+                    <h3>Esta semana</h3>
+                    <p id="visitasProgramadas">–</p>
+                </article>
+                <article class="card">
+                    <h3>Urgentes</h3>
+                    <p id="documentosPendientes">–</p>
+                </article>
+            </section>
+
+            <section class="card">
+                <div class="card-header">
+                    <div>
+                        <h3>Próximas recepciones</h3>
+                        <p class="card-subtitle">Vehículos con OT programada para ingreso</p>
+                    </div>
+                </div>
+                <div
+                    style="padding: 15px 25px; background:#f8f9fa; border-bottom:1px solid #eee; display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
+                    <div style="flex: 1; min-width: 200px;">
+                        <input type="text" id="agendaBusqueda" placeholder="Buscar por OT, patente o mecánico..."
+                            style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;" />
+                    </div>
+                    <div>
+                        <select id="agendaEstado"
+                            style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
+                            <option value="">Todos los estados</option>
+                            <option value="PENDIENTE">Pendiente</option>
+                            <option value="APROBADO">Aprobado</option>
+                            <option value="EN_PROCESO">En Proceso</option>
+                            <option value="ESPERA_REPUESTOS">Espera Repuestos</option>
+                        </select>
+                    </div>
+                    <div>
+                        <button class="btn btn-primary" onclick="aplicarFiltrosAgenda()">Filtrar</button>
+                        <button class="btn btn-secondary" onclick="limpiarFiltrosAgenda()"
+                            style="margin-left: 8px;">Limpiar</button>
+                    </div>
+                </div>
+                <div id="agendaList" class="agenda-list">
+                    <div class="empty-state">No hay recepciones programadas.</div>
+                </div>
+            </section>
+
+            <section class="card">
+                <div class="card-header workshop-header">
+                    <div>
+                        <h3>Vehículos en taller</h3>
+                        <p class="card-subtitle">Unidades con ingreso registrado y acciones de seguimiento</p>
+                    </div>
+                    <span id="recepWorkshopMsg" class="status hidden"></span>
+                </div>
+                <div id="workshopList" class="workshop-list">
+                    <div class="empty-state">Aún no hay vehículos en taller.</div>
+                </div>
+                <div id="workshopOverflowMessage"
+                    style="display: none; padding: 20px; text-align: center; background: #f8f9fa; border-top: 1px solid #eee;">
+                    <p style="color: #666; margin-bottom: 10px;">Hay más vehículos en taller</p>
+                    <button class="btn btn-primary" onclick="switchTab('vehiculos')">Ver todos los vehículos</button>
+                </div>
+            </section>
+        </section>
+
+        <!-- Sección Vehículos -->
+        <section id="tab-vehiculos" class="tab" style="display: none;">
+            <div class="page-title">
+                <h2>Vehículos en Taller</h2>
+                <button class="btn btn-secondary" id="btnVehiculosRefresh"
+                    onclick="loadAllWorkshopVehicles()">Actualizar</button>
+            </div>
+
+            <!-- Filtros -->
+            <div class="card" style="margin-bottom: 20px;">
+                <div style="padding: 15px 25px; background:#f8f9fa; border-bottom:1px solid #eee;">
+                    <h3 style="margin: 0 0 15px 0; font-size: 16px; color: #333;">Filtros de Búsqueda</h3>
+                    <div
+                        style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; align-items: end;">
+                        <div>
+                            <label
+                                style="display: block; margin-bottom: 5px; font-weight: 600; color: #333; font-size: 14px;">Fecha
+                                Desde</label>
+                            <input type="date" id="vehiculosFiltroFechaDesde"
+                                style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;" />
+                        </div>
+                        <div>
+                            <label
+                                style="display: block; margin-bottom: 5px; font-weight: 600; color: #333; font-size: 14px;">Fecha
+                                Hasta</label>
+                            <input type="date" id="vehiculosFiltroFechaHasta"
+                                style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;" />
+                        </div>
+                        <div>
+                            <label
+                                style="display: block; margin-bottom: 5px; font-weight: 600; color: #333; font-size: 14px;">Estado</label>
+                            <select id="vehiculosFiltroEstado"
+                                style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
+                                <option value="">Todos los estados</option>
+                                <option value="PENDIENTE">Pendiente</option>
+                                <option value="APROBADO">Aprobado</option>
+                                <option value="EN_PROCESO">En Proceso</option>
+                                <option value="ESPERA_REPUESTOS">Espera Repuestos</option>
+                                <option value="LISTO">Listo</option>
+                                <option value="COMPLETADO">Completado</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label
+                                style="display: block; margin-bottom: 5px; font-weight: 600; color: #333; font-size: 14px;">Vehículo
+                                (Patente)</label>
+                            <input type="text" id="vehiculosFiltroPatente" placeholder="Buscar por patente..."
+                                style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;" />
+                        </div>
+                        <div>
+                            <label
+                                style="display: block; margin-bottom: 5px; font-weight: 600; color: #333; font-size: 14px;">Mecánico</label>
+                            <input type="text" id="vehiculosFiltroMecanico" placeholder="Buscar por nombre..."
+                                style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;" />
+                        </div>
+                    </div>
+                    <div style="margin-top: 15px; display: flex; gap: 10px;">
+                        <button class="btn btn-primary" onclick="aplicarFiltrosVehiculos()">Aplicar Filtros</button>
+                        <button class="btn btn-secondary" onclick="limpiarFiltrosVehiculos()">Limpiar Filtros</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lista de vehículos -->
+            <div class="card">
+                <div id="workshopListAll" class="workshop-list">
+                    <div class="empty-state">Cargando vehículos...</div>
+                </div>
+                <!-- Contenedor para paginación -->
+                <div id="vehiculosPagination" style="margin-top: 20px;"></div>
+            </div>
+        </section>
+
+        <!-- Sección Entregas -->
+        <section id="tab-entregas" class="tab" style="display: none;">
+            <div class="page-title">
+                <h2>Historial de Entregas de Vehículos</h2>
+                <button class="btn btn-secondary" id="btnEntregasRefresh"
+                    onclick="refreshEntregasHistory()">Actualizar</button>
+            </div>
+            <div class="card">
+                <div id="entregas-container"
+                    style="background: white; border-radius: 8px; padding: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                    <div class="empty-state">Cargando historial de entregas...</div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Modal de Cierre de Sesión -->
+    <div id="modalLogoutConfirm" class="modal" aria-hidden="true">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Confirmar Cierre de Sesión</h3>
+                <button class="close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>¿Está seguro de que desea cerrar la sesión?</p>
+                <div class="logout-actions">
+                    <button type="button" class="btn btn-logout-cancel btn-secondary">Cancelar</button>
+                    <button type="button" class="btn btn-logout-confirm btn-danger" id="btnConfirmLogout">Cerrar
+                        Sesión</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="modalCheckin" aria-hidden="true">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Registrar llegada</h3>
+                <button class="close-btn" onclick="closeModal('modalCheckin')">&times;</button>
+            </div>
+            <form id="recepCheckinForm">
+                <input type="hidden" id="recep_checkin_ot_id" />
+                <div class="checkin-summary">
+                    <div class="summary-item">
+                        <span class="summary-label">OT</span>
+                        <span class="summary-value" id="recep_checkin_ot_numero">—</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Vehículo</span>
+                        <span class="summary-value" id="recep_checkin_vehicle">—</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Problema reportado</span>
+                        <span class="summary-value" id="recep_checkin_problem">—</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Mecánico asignado</span>
+                        <span class="summary-value" id="recep_checkin_mechanic">—</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Chofer</span>
+                        <span class="summary-value" id="recep_checkin_driver">—</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Ventana planificada</span>
+                        <span class="summary-value" id="recep_checkin_schedule">—</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="recep_checkin_arrival">Fecha y hora de llegada real (*)</label>
+                    <input type="datetime-local" id="recep_checkin_arrival" required />
+                    <div class="form-hint">Debe estar dentro del rango planificado de la OT.</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Checklist de documentos recibidos</label>
+                    <div class="checklist-grid">
+                        <label class="checklist-item">
+                            <input type="checkbox" id="recep_check_permiso" />
+                            <div class="checklist-content">
+                                <span class="checklist-title">Permiso de circulación</span>
+                                <span class="checklist-subtitle">Vigente y asociado a la patente del vehículo.</span>
+                            </div>
+                        </label>
+
+                        <label class="checklist-item">
+                            <input type="checkbox" id="recep_check_seguro" />
+                            <div class="checklist-content">
+                                <span class="checklist-title">Seguro / SOAP vigente</span>
+                                <span class="checklist-subtitle">Cobertura al día, sin vencimiento.</span>
+                            </div>
+                        </label>
+                    </div>
+
+                    <label class="toggle" id="recep_check_all_ok_wrapper">
+                        <input type="checkbox" id="recep_check_all_ok" />
+                        <span class="toggle-text">Todo OK / Documentación completa</span>
+                        <span class="toggle-hint">(se habilita cuando todos los documentos están marcados)</span>
+                    </label>
+                </div>
+
+                <div class="form-group">
+                    <label for="recep_checkin_evidencias">Evidencias adicionales (opcional)</label>
+                    <input type="file" id="recep_checkin_evidencias" accept="image/jpeg,image/png,image/webp,application/pdf,text/plain,.jpg,.jpeg,.png,.webp,.pdf,.txt,.doc,.docx" multiple />
+                    <div class="form-hint">Hasta 3 archivos (JPG, PNG, WEBP, PDF, TXT, DOC, DOCX) para respaldar la recepción.</div>
+                    <ul id="recep_checkin_evidencias_list" class="file-list"></ul>
+                </div>
+
+                <div class="form-group">
+                    <label for="recep_checkin_notes">Observaciones (opcional)</label>
+                    <textarea id="recep_checkin_notes" rows="3"
+                        placeholder="Notas adicionales o hallazgos..."></textarea>
+                </div>
+
+                <div class="form-actions">
+                    <span id="recepCheckinMsg" class="status hidden"></span>
+                    <button type="button" class="btn btn-warning" onclick="closeModal('modalCheckin')">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Aceptar ingreso</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Finalizar Proceso de Retiro -->
+    <div class="modal" id="modalFinalizeRetiro" aria-hidden="true">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Finalizar Proceso y Permitir Retiro</h3>
+                <button class="close-btn" onclick="closeModal('modalFinalizeRetiro')">&times;</button>
+            </div>
+            <form id="recepFinalizeRetiroForm">
+                <input type="hidden" id="recep_finalize_ot_id" />
+                <div class="checkin-summary">
+                    <div class="summary-item">
+                        <span class="summary-label">OT</span>
+                        <span class="summary-value" id="recep_finalize_ot_numero">—</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Vehículo</span>
+                        <span class="summary-value" id="recep_finalize_vehicle">—</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Mecánico</span>
+                        <span class="summary-value" id="recep_finalize_mechanic">—</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="recep_finalize_evidencias">Evidencias de documentación (opcional)</label>
+                    <input type="file" id="recep_finalize_evidencias" accept="image/jpeg,image/png,image/webp,application/pdf,text/plain,.jpg,.jpeg,.png,.webp,.pdf,.txt,.doc,.docx" multiple />
+                    <div class="form-hint">Hasta 10 archivos (JPG, PNG, WEBP, PDF, TXT, DOC, DOCX) para documentar el proceso de retiro.</div>
+                    <ul id="recep_finalize_evidencias_list" class="file-list"></ul>
+                </div>
+
+                <div class="form-group">
+                    <label for="recep_finalize_observaciones">Observaciones (opcional)</label>
+                    <textarea id="recep_finalize_observaciones" rows="3"
+                        placeholder="Notas adicionales sobre el proceso de retiro..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="recep_finalize_password">Confirmar Contraseña (*)</label>
+                    <input type="password" id="recep_finalize_password" required
+                        placeholder="Ingresa tu contraseña para confirmar" />
+                    <div class="form-hint">Por seguridad, debes confirmar tu contraseña para finalizar el proceso.</div>
+                </div>
+
+                <div class="form-actions">
+                    <span id="recepFinalizeRetiroMsg" class="status hidden"></span>
+                    <button type="button" class="btn btn-warning"
+                        onclick="closeModal('modalFinalizeRetiro')">Cancelar</button>
+                    <button type="submit" class="btn btn-success">Finalizar Proceso</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="assets/js/auth.js"></script>
+    <script src="assets/js/logout_button.js"></script>
+    <script src="assets/js/offline-handler.js"></script>
+    <script src="assets/js/file-utils.js"></script>
+    <script src="assets/js/filters-search.js"></script>
+    <script src="assets/js/error-handler.js"></script>
+    <script src="assets/js/loading-utils.js"></script>
+    <script src="assets/js/pagination.js"></script>
+    <script src="assets/js/history-viewer.js"></script>
+    <script src="assets/js/notifications-manager.js"></script>
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js" crossorigin="anonymous"></script>
+    <script src="assets/js/recepcionista.js" defer></script>
+</body>
+
+</html>

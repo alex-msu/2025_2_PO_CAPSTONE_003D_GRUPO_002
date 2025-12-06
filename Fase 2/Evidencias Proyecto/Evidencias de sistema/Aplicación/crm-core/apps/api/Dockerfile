@@ -1,15 +1,17 @@
-FROM node:20-alpine
-
-# toolchain para módulos nativos (bcrypt)
-RUN apk add --no-cache python3 make g++
-
+FROM node:20-alpine AS builder
 WORKDIR /app
 COPY package*.json ./
-RUN if [ -f package-lock.json ]; then npm ci; else npm install; fi
-
-COPY tsconfig.json nest-cli.json ./
+RUN npm ci
+COPY tsconfig*.json nest-cli.json ./
 COPY src ./src
+RUN npx nest build
 
+FROM node:20-alpine
+WORKDIR /app
+ENV NODE_ENV=production
+COPY package*.json ./
+RUN npm ci --omit=dev
+COPY --from=builder /app/dist ./dist
+ENV PORT=3000
 EXPOSE 3000
-# MUY IMPORTANTE: start:dev (no start)
-CMD ["npm","run","start:dev"]
+CMD ["node", "dist/main.js"]

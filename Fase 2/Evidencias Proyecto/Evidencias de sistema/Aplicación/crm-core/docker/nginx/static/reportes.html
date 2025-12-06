@@ -352,7 +352,6 @@
         }
 
         function generarReporteJefeTaller() {
-            // CORRECCIÓN: Usamos la función auxiliar en lugar del operador ?.
             var fecha = getElementValue('fecha', new Date().toISOString().split('T')[0]);
             var taller = getElementValue('taller', 'todos');
 
@@ -440,7 +439,6 @@
         }
 
         function generarReporteMecanico() {
-            // CORRECCIÓN: Usamos la función auxiliar
             var mecanico = getElementValue('mecanico', 'todos');
             var fechaInicio = getElementValue('fechaInicio', '');
             var fechaFin = getElementValue('fechaFin', '');
@@ -511,7 +509,6 @@
         }
 
         function generarReporteProblema() {
-            // CORRECCIÓN: Usamos la función auxiliar
             var patente = getElementValue('patenteProblema', 'BKXL45');
             var detalle = getElementValue('detalleProblema', 'Falla en motor');
             

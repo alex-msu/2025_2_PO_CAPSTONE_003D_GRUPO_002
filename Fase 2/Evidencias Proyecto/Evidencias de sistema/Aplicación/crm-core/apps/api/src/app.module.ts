@@ -1,32 +1,54 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { HealthController } from './health.controller';
-
+import { DevController } from './dev.controller';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
-import { FilesModule } from './files/files.module';
-import { User } from './users/entities/user.entity';
-import { DevController } from './dev.controller';
-import { OtModule } from './ot/ot.module';
+import { Usuario } from './users/entities/user.entity'; // <-- Usando "Usuario", ¡correcto!
+import { VehiclesModule } from './vehicles/vehicles.module';
+import { APP_GUARD } from '@nestjs/core';
+import { WorkOrdersModule } from './workorders/workorders.module';
+import { SolicitudesModule } from './solicitudes/solicitudes.module';
+import { EventsModule } from './events/events.module';
+import { StockModule } from './stock/stock.module';
+import { NotificationsModule } from './notifications/notifications.module';
+import { HistoryModule } from './history/history.module';
+import { ReportsModule } from './reports/reports.module';
+import { ConfigModule as AppConfigModule } from './config/config.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true }),
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
+
     TypeOrmModule.forRootAsync({
-      useFactory: () => ({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
         type: 'postgres',
-        url: process.env.DATABASE_URL,   // viene del docker-compose
+        url: configService.get<string>('DATABASE_URL'),
         autoLoadEntities: true,
-        synchronize: false,              // usamos tu SQL inicial
+        synchronize: false, // Desactivado para evitar modificaciones a la base de datos existente
       }),
     }),
-    TypeOrmModule.forFeature([User]),
-    UsersModule,
+    TypeOrmModule.forFeature([Usuario]), 
     AuthModule,
-    FilesModule,
-    OtModule,
+    UsersModule,
+    VehiclesModule,
+    WorkOrdersModule,
+    SolicitudesModule,
+    EventsModule,
+    StockModule,
+    NotificationsModule,
+    HistoryModule,
+    ReportsModule,
+    AppConfigModule,
   ],
   controllers: [HealthController, DevController],
+
+  providers: [
+  ],
 })
 export class AppModule {}

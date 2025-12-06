@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard Bodeguero - CRM Flota PepsiCo</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/logout_button.css">
+</head>
+
+<body>
+    <header class="header">
+        <div class="logo">
+            <h1>CRM Flota PepsiCo</h1>
+        </div>
+        <div class="user-info">
+            <span class="user-role">Bodeguero</span>
+            <span id="currentUserName">Usuario</span>
+            <div class="notifications-wrapper" style="position: relative;">
+                <button id="notificationsBtn" class="btn btn-secondary" style="position: relative; margin-right: 10px;">
+                    🔔 Notificaciones
+                    <span id="notificationsBadge" class="notification-badge" style="display: none; position: absolute; top: -8px; right: -8px; background: #dc3545; color: white; border-radius: 50%; width: 20px; height: 20px; font-size: 12px; display: flex; align-items: center; justify-content: center; font-weight: bold;">0</span>
+                </button>
+                <div id="notificationsPanel" class="notifications-panel" style="display: none; position: absolute; top: 100%; right: 0; width: 400px; max-height: 500px; background: white; border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 1000; margin-top: 10px;">
+                    <div class="notifications-header" style="padding: 15px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
+                        <h3 style="margin: 0; font-size: 16px;">Notificaciones</h3>
+                        <button onclick="NotificationsManager.markAllAsRead()" class="btn btn-sm btn-secondary" style="font-size: 12px;">Marcar todas como leídas</button>
+                    </div>
+                    <div class="notifications-content" style="max-height: 400px; overflow-y: auto; padding: 10px;">
+                        <div class="notification-empty">Cargando...</div>
+                    </div>
+                </div>
+            </div>
+            <button class="btn-logout" id="btnLogout">Cerrar Sesión</button>
+        </div>
+    </header>
+
+    <nav class="nav-container">
+        <ul class="nav-menu" id="mainNav">
+            <li><a href="#" class="active" data-tab="inventario">Inventario</a></li>
+            <li><a href="#" data-tab="solicitudes">Solicitudes <span id="solicitudesPendNavLabel" class="veh-nav-indicator is-hidden">(0)</span></a></li>
+            <li><a href="#" data-tab="movimientos">Movimientos</a></li>
+            <li><a href="#" data-tab="repuestos">Repuestos</a></li>
+        </ul>
+    </nav>
+
+    <main class="main-content">
+        <div id="mainStatus" class="status hidden"></div>
+        <!-- Contenedor para notificaciones flotantes -->
+        <div id="notificationsContainer" style="position: fixed; top: 80px; right: 20px; z-index: 10000; max-width: 400px;"></div>
+
+        <section id="tab-inventario" class="tab active">
+            <div class="page-title">
+                <h2>Gestión de Inventario</h2>
+                <div class="quick-actions">
+                    <button class="btn btn-success" onclick="stockReload()">Actualizar</button>
+                    <button class="btn btn-primary" onclick="openModal('modalMovimiento')">Nuevo Movimiento</button>
+                </div>
+            </div>
+
+            <div class="stats-grid" style="margin-bottom: 30px;">
+                <div class="stat-card">
+                    <h3 class="stat-number" id="total-repuestos">...</h3>
+                    <p>Total Repuestos</p>
+                </div>
+                <div class="stat-card">
+                    <h3 class="stat-number" id="stock-bajo-count">...</h3>
+                    <p>Stock Bajo</p>
+                </div>
+                <div class="stat-card">
+                    <h3 class="stat-number" id="stock-critico-count">...</h3>
+                    <p>Stock Crítico</p>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <div style="padding: 15px 25px; background:#f8f9fa; border-bottom:1px solid #eee; display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
+                    <div style="flex: 1; min-width: 200px;">
+                        <input type="text" id="stockBusqueda" placeholder="Buscar por SKU o nombre..." style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;" />
+                    </div>
+                    <div>
+                        <select id="stockEstado" style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
+                            <option value="">Todos los estados</option>
+                            <option value="normal">Normal</option>
+                            <option value="bajo">Bajo</option>
+                            <option value="critico">Crítico</option>
+                        </select>
+                    </div>
+                    <div>
+                        <button class="btn btn-primary" onclick="aplicarFiltrosInventario()">Filtrar</button>
+                        <button class="btn btn-secondary" onclick="limpiarFiltrosInventario()" style="margin-left: 8px;">Limpiar</button>
+                    </div>
+                </div>
+                <h3 style="padding: 20px 25px; background:#f8f9fa; border-bottom:1px solid #eee;">Inventario Actual</h3>
+                <table id="stockTabla">
+                    <thead>
+                        <tr>
+                            <th>SKU</th>
+                            <th>Repuesto</th>
+                            <th>Stock Actual</th>
+                            <th>Mínimo</th>
+                            <th>Máximo</th>
+                            <th>Ubicación</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="stockTBody">
+                    </tbody>
+                </table>
+                <div id="stockPagination"></div>
+            </div>
+        </section>
+
+        <section id="tab-solicitudes" class="tab">
+            <div class="page-title">
+                <h2>Solicitudes de Repuestos</h2>
+                <div class="quick-actions">
+                    <button class="btn btn-success" onclick="solicitudesRepuestosReload()">Actualizar</button>
+                </div>
+            </div>
+            <div class="table-container">
+                <div style="padding: 15px 25px; background:#f8f9fa; border-bottom:1px solid #eee; display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
+                    <div>
+                        <select id="solicitudesUrgencia" style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
+                            <option value="">Todas las urgencias</option>
+                            <option value="URGENTE">Urgente</option>
+                            <option value="NORMAL">Normal</option>
+                        </select>
+                    </div>
+                    <div>
+                        <button class="btn btn-primary" onclick="aplicarFiltrosSolicitudes()">Filtrar</button>
+                        <button class="btn btn-secondary" onclick="limpiarFiltrosSolicitudes()" style="margin-left: 8px;">Limpiar</button>
+                    </div>
+                </div>
+                <h3 style="padding: 20px 25px; background:#f8f9fa; border-bottom:1px solid #eee;">Solicitudes Pendientes</h3>
+                <table id="solicitudesRepuestosTabla">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>OT</th>
+                            <th>Vehículo</th>
+                            <th>Mecánico</th>
+                            <th>Repuesto</th>
+                            <th>Cantidad</th>
+                            <th>Urgencia</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="solicitudesRepuestosTBody">
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="tab-movimientos" class="tab">
+            <div class="page-title">
+                <h2>Historial de Movimientos</h2>
+                <div class="quick-actions">
+                    <button class="btn btn-success" onclick="movimientosReload()">Actualizar</button>
+                </div>
+            </div>
+            <div class="table-container">
+                <div style="padding: 15px 25px; background:#f8f9fa; border-bottom:1px solid #eee; display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
+                    <div style="flex: 1; min-width: 200px;">
+                        <input type="text" id="movimientosBusqueda" placeholder="Buscar por SKU o nombre..." style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;" />
+                    </div>
+                    <div>
+                        <input type="date" id="movimientosFechaDesde" style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;" />
+                    </div>
+                    <div>
+                        <input type="date" id="movimientosFechaHasta" style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;" />
+                    </div>
+                    <div>
+                        <select id="movimientosTipo" style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
+                            <option value="">Todos los tipos</option>
+                            <option value="ENTRADA">Entrada</option>
+                            <option value="SALIDA">Salida</option>
+                            <option value="AJUSTE">Ajuste</option>
+                        </select>
+                    </div>
+                    <div>
+                        <button class="btn btn-primary" onclick="aplicarFiltrosMovimientos()">Filtrar</button>
+                        <button class="btn btn-secondary" onclick="limpiarFiltrosMovimientos()" style="margin-left: 8px;">Limpiar</button>
+                    </div>
+                </div>
+                <h3 style="padding: 20px 25px; background:#f8f9fa; border-bottom:1px solid #eee;">Movimientos Recientes</h3>
+                <table id="movimientosTabla">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Repuesto</th>
+                            <th>Tipo</th>
+                            <th>Cantidad</th>
+                            <th>Motivo</th>
+                            <th>Usuario</th>
+                        </tr>
+                    </thead>
+                    <tbody id="movimientosTBody">
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="tab-repuestos" class="tab">
+            <div class="page-title">
+                <h2>Catálogo de Repuestos</h2>
+                <div class="quick-actions">
+                    <button class="btn btn-primary" onclick="openModal('modalRepuesto')">Nuevo Repuesto</button>
+                    <button class="btn btn-success" onclick="repuestosReload()">Actualizar</button>
+                </div>
+            </div>
+            <div class="table-container">
+                <h3 style="padding: 20px 25px; background:#f8f9fa; border-bottom:1px solid #eee;">Listado de Repuestos</h3>
+                <table id="repuestosTabla">
+                    <thead>
+                        <tr>
+                            <th>SKU</th>
+                            <th>Nombre</th>
+                            <th>Descripción</th>
+                            <th>Unidad</th>
+                            <th>Precio Costo</th>
+                            <th>Proveedor</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody id="repuestosTBody">
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <!-- Modal: Nuevo Movimiento -->
+    <div id="modalMovimiento" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Registrar Movimiento de Stock</h3>
+                <button class="close-btn" onclick="closeModal('modalMovimiento')">&times;</button>
+            </div>
+            <form id="movimientoForm">
+                <div class="form-group">
+                    <label for="mov_repuesto">Repuesto (*)</label>
+                    <select id="mov_repuesto" required>
+                        <option value="">Selecciona un repuesto</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="mov_tipo">Tipo de Movimiento (*)</label>
+                    <select id="mov_tipo" required>
+                        <option value="">Selecciona tipo</option>
+                        <option value="ENTRADA">Entrada</option>
+                        <option value="SALIDA">Salida</option>
+                        <option value="AJUSTE">Ajuste</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="mov_cantidad">Cantidad (*)</label>
+                    <input type="number" id="mov_cantidad" min="1" required>
+                </div>
+                <div class="form-group">
+                    <label for="mov_costo">Costo Unitario</label>
+                    <input type="number" id="mov_costo" step="0.01" min="0">
+                </div>
+                <div class="form-group">
+                    <label for="mov_motivo">Motivo</label>
+                    <textarea id="mov_motivo" rows="3" placeholder="Descripción del movimiento..."></textarea>
+                </div>
+                <div class="form-actions">
+                    <div id="movMsg" class="status hidden"></div>
+                    <button type="button" class="btn btn-warning" onclick="closeModal('modalMovimiento')">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Registrar Movimiento</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Editar Inventario -->
+    <div id="modalEditInventario" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Editar Inventario</h3>
+                <button class="close-btn" onclick="closeModal('modalEditInventario')">&times;</button>
+            </div>
+            <form id="editInventarioForm">
+                <input type="hidden" id="edit_inv_taller_id" />
+                <input type="hidden" id="edit_inv_repuesto_id" />
+                <div class="form-group">
+                    <label for="edit_inv_cantidad">Cantidad Disponible (*)</label>
+                    <input type="number" id="edit_inv_cantidad" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit_inv_minimo">Nivel Mínimo (*)</label>
+                    <input type="number" id="edit_inv_minimo" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit_inv_maximo">Nivel Máximo (*)</label>
+                    <input type="number" id="edit_inv_maximo" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit_inv_ubicacion">Ubicación en Almacén</label>
+                    <input type="text" id="edit_inv_ubicacion" maxlength="100">
+                </div>
+                <div class="form-actions">
+                    <div id="editInvMsg" class="status hidden"></div>
+                    <button type="button" class="btn btn-warning" onclick="closeModal('modalEditInventario')">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Nuevo Repuesto -->
+    <div id="modalRepuesto" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Nuevo Repuesto</h3>
+                <button class="close-btn" onclick="closeModal('modalRepuesto')">&times;</button>
+            </div>
+            <form id="repuestoForm">
+                <div class="form-group">
+                    <label for="rep_sku">SKU (*)</label>
+                    <input type="text" id="rep_sku" maxlength="50" required>
+                </div>
+                <div class="form-group">
+                    <label for="rep_nombre">Nombre (*)</label>
+                    <input type="text" id="rep_nombre" maxlength="200" required>
+                </div>
+                <div class="form-group">
+                    <label for="rep_descripcion">Descripción</label>
+                    <textarea id="rep_descripcion" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="rep_unidad">Unidad (*)</label>
+                    <input type="text" id="rep_unidad" maxlength="20" required>
+                </div>
+                <div class="form-group">
+                    <label for="rep_precio">Precio Costo</label>
+                    <input type="number" id="rep_precio" step="0.01" min="0">
+                </div>
+                <div class="form-group">
+                    <label for="rep_proveedor">Información Proveedor</label>
+                    <textarea id="rep_proveedor" rows="2"></textarea>
+                </div>
+                <div class="form-actions">
+                    <div id="repMsg" class="status hidden"></div>
+                    <button type="button" class="btn btn-warning" onclick="closeModal('modalRepuesto')">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Crear Repuesto</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Responder Solicitud de Repuestos -->
+    <div id="modalResponderSolicitud" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Responder Solicitud de Repuestos</h3>
+                <button class="close-btn" onclick="closeModal('modalResponderSolicitud')">&times;</button>
+            </div>
+            <form id="responderSolicitudForm">
+                <input type="hidden" id="resp_sol_id" />
+                <div class="form-info" style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 4px;">
+                    <p><strong>OT:</strong> <span id="resp_sol_ot">—</span></p>
+                    <p><strong>Repuesto:</strong> <span id="resp_sol_repuesto">—</span></p>
+                    <p><strong>Cantidad:</strong> <span id="resp_sol_cantidad">—</span></p>
+                    <p><strong>Mecánico:</strong> <span id="resp_sol_mecanico">—</span></p>
+                </div>
+                <div class="form-group">
+                    <label>Acción (*)</label>
+                    <div class="radio-group">
+                        <label class="radio-item">
+                            <input type="radio" name="resp_sol_accion" value="APROBADA" required>
+                            <span>Aprobar</span>
+                        </label>
+                        <label class="radio-item">
+                            <input type="radio" name="resp_sol_accion" value="RECHAZADA" required>
+                            <span>Rechazar</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group" id="resp_sol_fecha_group" style="display: none;">
+                    <label>Fecha y Hora Estimada de Entrega</label>
+                    <div class="date-range">
+                        <input type="date" id="resp_sol_fecha_entrega">
+                    </div>
+                    <div class="time-range">
+                        <div class="time-field">
+                            <label for="resp_sol_hora_entrega">Hora</label>
+                            <div class="time-picker-wrapper">
+                                <input type="text" id="resp_sol_hora_entrega" class="time-picker-input" placeholder="HH:MM" readonly>
+                                <div class="time-picker-popover picker" id="resp_sol_hora_entrega_picker" aria-hidden="true">
+                                    <div class="time-wrap">
+                                        <div class="time">
+                                            <span class="part hour active" data-picker="resp_sol_hora_entrega">14</span>
+                                            <span>:</span>
+                                            <span class="part min" data-picker="resp_sol_hora_entrega">00</span>
+                                        </div>
+                                    </div>
+                                    <div class="face-wrap">
+                                        <div class="face">
+                                            <span class="face-set hour" data-picker="resp_sol_hora_entrega">
+                                                <div class="handle-bar"></div>
+                                                <div class="face-number" data-css-time="1">1</div>
+                                                <div class="face-number" data-css-time="2">2</div>
+                                                <div class="face-number" data-css-time="3">3</div>
+                                                <div class="face-number" data-css-time="4">4</div>
+                                                <div class="face-number" data-css-time="5">5</div>
+                                                <div class="face-number" data-css-time="6">6</div>
+                                                <div class="face-number" data-css-time="7">7</div>
+                                                <div class="face-number" data-css-time="8">8</div>
+                                                <div class="face-number" data-css-time="9">9</div>
+                                                <div class="face-number" data-css-time="10">10</div>
+                                                <div class="face-number" data-css-time="11">11</div>
+                                                <div class="face-number" data-css-time="0">12</div>
+                                                <div class="handle">
+                                                    <div class="handle-spot"></div>
+                                                </div>
+                                            </span>
+                                            <span class="face-set min face-off" data-picker="resp_sol_hora_entrega">
+                                                <div class="handle-bar"></div>
+                                                <div class="face-number" data-css-time="0">00</div>
+                                                <div class="face-number" data-css-time="1">05</div>
+                                                <div class="face-number" data-css-time="2">10</div>
+                                                <div class="face-number" data-css-time="3">15</div>
+                                                <div class="face-number" data-css-time="4">20</div>
+                                                <div class="face-number" data-css-time="5">25</div>
+                                                <div class="face-number" data-css-time="6">30</div>
+                                                <div class="face-number" data-css-time="7">35</div>
+                                                <div class="face-number" data-css-time="8">40</div>
+                                                <div class="face-number" data-css-time="9">45</div>
+                                                <div class="face-number" data-css-time="10">50</div>
+                                                <div class="face-number" data-css-time="11">55</div>
+                                                <div class="handle">
+                                                    <div class="handle-spot"></div>
+                                                </div>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="hour-24-controls" data-picker="resp_sol_hora_entrega">
+                                        <button type="button" class="hour-btn am-pm-btn am" data-hour="0">AM</button>
+                                        <button type="button" class="hour-btn am-pm-btn pm" data-hour="12">PM</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="resp_sol_comentarios">Comentarios</label>
+                    <textarea id="resp_sol_comentarios" rows="3" placeholder="Comentarios adicionales..."></textarea>
+                </div>
+                <div class="form-actions">
+                    <div id="respSolMsg" class="status hidden"></div>
+                    <button type="button" class="btn btn-warning" onclick="closeModal('modalResponderSolicitud')">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Enviar Respuesta</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Logout -->
+    <div id="modalLogoutConfirm" class="modal" aria-hidden="true" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Confirmar Cierre de Sesión</h3>
+                <button class="close-btn">&times;</button>
+            </div>
+            <div style="padding: 25px;">
+                <p>¿Está seguro de que desea cerrar sesión?</p>
+                <div class="form-actions" style="border-top: none; padding-top: 20px;">
+                    <button type="button" class="btn btn-warning btn-secondary">Cancelar</button>
+                    <button type="button" class="btn btn-danger" id="btnConfirmLogout">Cerrar Sesión</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Módulo de autenticación (debe cargarse primero, SIN defer para que esté disponible) -->
+    <script src="assets/js/auth.js"></script>
+    <script src="assets/js/logout_button.js"></script>
+    <script src="assets/js/offline-handler.js"></script>
+    <script src="assets/js/validations.js"></script>
+    <script src="assets/js/pagination.js"></script>
+    <script src="assets/js/filters-search.js"></script>
+    <script src="assets/js/error-handler.js"></script>
+    <script src="assets/js/loading-utils.js"></script>
+    <script src="assets/js/notifications-manager.js"></script>
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js" crossorigin="anonymous"></script>
+    <!-- Cargar función initTimePicker desde jefe_taller_dashboard.js (copia exacta) -->
+    <script>
+        // Función initTimePicker copiada EXACTAMENTE de jefe_taller_dashboard.js
+        function initTimePicker(inputId, pickerId) {
+            var input = document.getElementById(inputId);
+            var picker = document.getElementById(pickerId);
+            if (!input || !picker) return;
+            
+            var pickerData = picker.getAttribute('data-picker') || inputId;
+            var timeWrap = picker.querySelector('.time-wrap .time');
+            var hourPart = picker.querySelector('.part.hour');
+            var minPart = picker.querySelector('.part.min');
+            var hourFace = picker.querySelector('.face-set.hour');
+            var minFace = picker.querySelector('.face-set.min');
+            var faceWrap = picker.querySelector('.face-wrap');
+            var hour24Controls = picker.querySelector('.hour-24-controls');
+            var hourBtns = hour24Controls ? hour24Controls.querySelectorAll('.hour-btn') : [];
+            
+            if (!timeWrap || !hourPart || !minPart || !hourFace || !minFace) return;
+            
+            var currentHour = 9;
+            var currentMin = 0;
+            var isMinMode = false;
+            var isMouseDown = false;
+            var currentHour24Base = 0; // 0 o 12 para formato 24 horas
+            
+            function pad(num, size) {
+                var s = String(num);
+                while (s.length < size) s = '0' + s;
+                return s;
+            }
+            
+            function setHandle(face, angle, length, anim) {
+                if (angle == null) return;
+                if (length === 'hidden') {
+                    length = face.classList.contains('min') ? 5.5 : 4;
+                } else if (length == null) {
+                    length = face.classList.contains('min') ? 6 : 5.5;
+                }
+                var deg = angle * 30;
+                var handle = face.querySelector('.handle');
+                var handleBar = face.querySelector('.handle-bar');
+                var bl = angle % 1 === 0 ? length - 0.25 : length;
+                
+                if (handle) {
+                    handle.style.transform = 'rotate(' + deg.toFixed(20) + 'deg) translateY(-' + length + 'em)';
+                    if (anim) handle.classList.add('anim');
+                    else handle.classList.remove('anim');
+                }
+                if (handleBar) {
+                    handleBar.style.transform = 'rotate(' + deg.toFixed(20) + 'deg) scaleY(' + bl + ')';
+                    if (anim) handleBar.classList.add('anim');
+                    else handleBar.classList.remove('anim');
+                }
+                face.setAttribute('data-hand-ang', angle);
+            }
+            
+            function minMode(yes) {
+                isMinMode = yes;
+                var cl = yes ? 'min' : 'hour';
+                var activeFace = yes ? minFace : hourFace;
+                var inactiveFace = yes ? hourFace : minFace;
+                
+                inactiveFace.classList.add('face-off');
+                setHandle(inactiveFace, parseFloat(inactiveFace.getAttribute('data-hand-ang') || '0'), 'hidden', true);
+                
+                activeFace.classList.remove('face-off');
+                setHandle(activeFace, parseFloat(activeFace.getAttribute('data-hand-ang') || '0'), null, true);
+                
+                hourPart.classList.toggle('active', !yes);
+                minPart.classList.toggle('active', yes);
+            }
+            
+            function setHour(hour) {
+                if (hour === 0) hour = 12;
+                hourPart.textContent = hour;
+                var hour12 = hour === 12 ? 0 : hour;
+                setHandle(hourFace, hour12, null, false);
+                currentHour = currentHour24Base + hour12;
+                if (currentHour === 24) currentHour = 0;
+                updateDisplay();
+            }
+            
+            function setMin(min) {
+                if (min === 60) min = 0;
+                if (min < 0) min = 0;
+                if (min > 59) min = 59;
+                minPart.textContent = pad(min, 2);
+                // Para minutos, usar posición basada en minutos reales (0-59) en lugar de múltiplos de 5
+                var minAngle = (min / 60) * 12; // Convertir minutos a posición en reloj de 12 horas
+                setHandle(minFace, minAngle, null, false);
+                currentMin = min;
+                updateDisplay();
+            }
+            
+            function updateDisplay() {
+                var timeStr = pad(currentHour, 2) + ':' + pad(currentMin, 2);
+                input.value = timeStr;
+            }
+            
+            function handleMove(e) {
+                if (!isMouseDown) return;
+                e.preventDefault();
+                var rect = faceWrap.getBoundingClientRect();
+                var cent = {
+                    left: rect.left + rect.width / 2,
+                    top: rect.top + rect.height / 2
+                };
+                var x = e.clientX - cent.left;
+                var y = e.clientY - cent.top;
+                var distance = Math.sqrt(x * x + y * y);
+                var radius = rect.width / 2;
+                
+                // Calcular ángulo (0° = arriba)
+                var angle = Math.atan2(y, x) * (180 / Math.PI) + 90;
+                if (angle < 0) angle += 360;
+                
+                if (isMinMode) {
+                    // Modo minutos: permitir cualquier minuto (0-59)
+                    var minute = Math.round((angle / 360) * 60);
+                    if (minute === 60) minute = 0;
+                    setMin(minute);
+                } else {
+                    // Modo hora: usar números del reloj (1-12)
+                    var hour12 = Math.round((angle / 360) * 12);
+                    if (hour12 === 0) hour12 = 12;
+                    if (hour12 > 12) hour12 = 12;
+                    setHour(hour12);
+                }
+            }
+            
+            // Abrir/cerrar picker
+            input.addEventListener('click', function(e) {
+                e.stopPropagation();
+                var isHidden = picker.getAttribute('aria-hidden') === 'true';
+                picker.setAttribute('aria-hidden', !isHidden);
+                
+                // Cerrar otros pickers
+                document.querySelectorAll('.time-picker-popover').forEach(function(p) {
+                    if (p !== picker) {
+                        p.setAttribute('aria-hidden', 'true');
+                    }
+                });
+                
+                // Inicializar modo minutos al abrir
+                if (!isHidden) {
+                    minMode(true);
+                }
+            });
+            
+            // Cerrar al hacer click fuera
+            document.addEventListener('click', function(e) {
+                if (!picker.contains(e.target) && !input.contains(e.target)) {
+                    picker.setAttribute('aria-hidden', 'true');
+                    isMouseDown = false;
+                }
+            });
+            
+            // Mouse events para el reloj
+            faceWrap.addEventListener('mousedown', function(e) {
+                isMouseDown = true;
+                handleMove(e);
+            });
+            
+            document.addEventListener('mousemove', handleMove);
+            document.addEventListener('mouseup', function() {
+                if (isMouseDown && !isMinMode) {
+                    minMode(true);
+                }
+                isMouseDown = false;
+            });
+            
+            // Click en hora/minuto para cambiar modo
+            hourPart.addEventListener('click', function() {
+                minMode(false);
+            });
+            
+            minPart.addEventListener('click', function() {
+                minMode(true);
+            });
+            
+            // Botones AM/PM
+            hourBtns.forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    var hour = parseInt(btn.getAttribute('data-hour'), 10);
+                    currentHour24Base = hour;
+                    var hour12 = currentHour % 12;
+                    if (hour12 === 0) hour12 = 12;
+                    setHour(hour12);
+                    hourBtns.forEach(function(b) { b.classList.remove('active'); });
+                    btn.classList.add('active');
+                });
+            });
+            
+            // Función para establecer el valor desde código externo
+            function setTimeValue(timeStr) {
+                if (!timeStr) {
+                    updateDisplay();
+                    return;
+                }
+                var parts = timeStr.split(':');
+                if (parts.length === 2) {
+                    var hour = parseInt(parts[0], 10) || 0;
+                    var minute = parseInt(parts[1], 10) || 0;
+                    
+                    currentHour = hour;
+                    currentMin = minute;
+                    
+                    // Determinar base de hora (0 o 12)
+                    currentHour24Base = hour >= 12 ? 12 : 0;
+                    var hour12 = hour % 12;
+                    if (hour12 === 0) hour12 = 12;
+                    
+                    setHour(hour12);
+                    setMin(minute);
+                    
+                    // Actualizar botones de hora 24
+                    hourBtns.forEach(function(btn) {
+                        var btnHour = parseInt(btn.getAttribute('data-hour'), 10);
+                        btn.classList.toggle('active', btnHour === currentHour24Base);
+                    });
+                }
+            }
+            
+            // Exponer función para establecer valor desde código externo
+            input.setTimeValue = setTimeValue;
+            
+            // Inicializar
+            minMode(false);
+            minMode(true);
+            
+            // Inicializar con valores por defecto si está vacío
+            if (!input.value) {
+                setTimeValue('09:00');
+            } else {
+                setTimeValue(input.value);
+            }
+        }
+    </script>
+    <script src="assets/js/bodeguero_dashboard.js" defer></script>
+</body>
+
+</html>
+

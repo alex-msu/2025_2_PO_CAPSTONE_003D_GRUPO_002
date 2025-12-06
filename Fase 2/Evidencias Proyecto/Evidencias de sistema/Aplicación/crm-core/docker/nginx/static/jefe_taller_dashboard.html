@@ -2,302 +2,15 @@
 <html lang="es">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
     <title>Dashboard Jefe de Taller - CRM Flota PepsiCo</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
-         :root {
-            --primary: #004B93;
-            --secondary: #FFC72C;
-            --success: #28a745;
-            --warning: #ffc107;
-            --danger: #dc3545;
-            --light: #f8f9fa;
-            --dark: #343a40;
-        }
-        
-        body {
-            background-color: #f5f7fa;
-            color: #333;
-        }
-        
-        .header {
-            background: white;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            padding: 15px 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .logo h1 {
-            color: var(--primary);
-            font-size: 22px;
-        }
-        
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-        
-        .user-role {
-            background: var(--primary);
-            color: white;
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-        
-        .nav-container {
-            background: var(--primary);
-        }
-        
-        .nav-menu {
-            display: flex;
-            list-style: none;
-            padding: 0 30px;
-        }
-        
-        .nav-menu li {
-            position: relative;
-        }
-        
-        .nav-menu a {
-            color: white;
-            text-decoration: none;
-            padding: 15px 20px;
-            display: block;
-            font-weight: 500;
-            transition: background 0.3s;
-        }
-        
-        .nav-menu a:hover,
-        .nav-menu a.active {
-            background: rgba(255, 255, 255, 0.1);
-        }
-        
-        .main-content {
-            padding: 30px;
-            min-height: calc(100vh - 140px);
-        }
-        
-        .page-title {
-            margin-bottom: 25px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .page-title h2 {
-            color: var(--primary);
-            font-size: 24px;
-        }
-        
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-        
-        .stat-card {
-            background: white;
-            border-radius: 8px;
-            padding: 20px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            border-left: 4px solid var(--primary);
-        }
-        
-        .stat-card h3 {
-            font-size: 14px;
-            color: #666;
-            margin-bottom: 10px;
-        }
-        
-        .stat-number {
-            font-size: 28px;
-            font-weight: 700;
-            color: var(--primary);
-        }
-        
-        .table-container {
-            background: white;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            margin-bottom: 30px;
-        }
-        
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        
-        th,
-        td {
-            padding: 15px;
-            text-align: left;
-            border-bottom: 1px solid #eee;
-        }
-        
-        th {
-            background: #f8f9fa;
-            font-weight: 600;
-            color: #555;
-        }
-        
-        .status-badge {
-            padding: 5px 10px;
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-        
-        .status-pendiente {
-            background: #fff3cd;
-            color: #856404;
-        }
-        
-        .status-proceso {
-            background: #cce7ff;
-            color: #004085;
-        }
-        
-        .status-completado {
-            background: #d4edda;
-            color: #155724;
-        }
-        
-        .status-aprobacion {
-            background: #f8d7da;
-            color: #721c24;
-        }
-        
-        .btn {
-            padding: 8px 16px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 14px;
-            transition: all 0.3s;
-        }
-        
-        .btn-primary {
-            background: var(--primary);
-            color: white;
-        }
-        
-        .btn-success {
-            background: var(--success);
-            color: white;
-        }
-        
-        .btn-warning {
-            background: var(--warning);
-            color: black;
-        }
-        
-        .btn-danger {
-            background: var(--danger);
-            color: white;
-        }
-        
-        .btn-sm {
-            padding: 5px 10px;
-            font-size: 12px;
-        }
-        
-        .btn:hover {
-            opacity: 0.9;
-            transform: translateY(-1px);
-        }
-        
-        .quick-actions {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-        /* Modal Styles */
-        
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-        
-        .modal-content {
-            background: white;
-            padding: 30px;
-            border-radius: 8px;
-            width: 90%;
-            max-width: 500px;
-            max-height: 80vh;
-            overflow-y: auto;
-        }
-        
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        
-        .modal-header h3 {
-            color: var(--primary);
-        }
-        
-        .close-btn {
-            background: none;
-            border: none;
-            font-size: 24px;
-            cursor: pointer;
-            color: #666;
-        }
-        
-        .form-group {
-            margin-bottom: 15px;
-        }
-        
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: 600;
-        }
-        
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 14px;
-        }
-        
-        .form-actions {
-            display: flex;
-            gap: 10px;
-            justify-content: flex-end;
-            margin-top: 20px;
-        }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+
+    <link rel="stylesheet" href="assets/css/style.css" />
+    <link rel="stylesheet" href="assets/css/logout_button.css">
 </head>
 
 <body>
@@ -307,313 +20,986 @@
         </div>
         <div class="user-info">
             <span class="user-role">Jefe de Taller</span>
-            <span>Carlos López</span>
-            <button class="btn btn-primary" onclick="logout()">Cerrar Sesión</button>
+            <span id="currentUserName">Usuario</span>
+            <div class="notifications-wrapper" style="position: relative;">
+                <button id="notificationsBtn" class="btn btn-secondary" style="position: relative; margin-right: 10px;">
+                    🔔 Notificaciones
+                    <span id="notificationsBadge" class="notification-badge" style="display: none; position: absolute; top: -8px; right: -8px; background: #dc3545; color: white; border-radius: 50%; width: 20px; height: 20px; font-size: 12px; display: flex; align-items: center; justify-content: center; font-weight: bold;">0</span>
+                </button>
+                <div id="notificationsPanel" class="notifications-panel" style="display: none; position: absolute; top: 100%; right: 0; width: 400px; max-height: 500px; background: white; border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 1000; margin-top: 10px;">
+                    <div class="notifications-header" style="padding: 15px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
+                        <h3 style="margin: 0; font-size: 16px;">Notificaciones</h3>
+                        <button onclick="NotificationsManager.markAllAsRead()" class="btn btn-sm btn-secondary" style="font-size: 12px;">Marcar todas como leídas</button>
+                    </div>
+                    <div class="notifications-content" style="max-height: 400px; overflow-y: auto; padding: 10px;">
+                        <ul id="notificationList" style="list-style: none; padding: 0; margin: 0;">
+                            <li class="empty-state">Cargando...</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <button class="btn-logout" id="btnLogout">Cerrar Sesión</button>
         </div>
     </header>
 
     <nav class="nav-container">
-        <ul class="nav-menu">
-            <li><a href="#" class="active">Dashboard</a></li>
-            <li><a href="vehiculos.html">Vehículos</a></li>
-            <li><a href="talleres.html">Talleres</a></li>
-            <li><a href="mecanicos.html">Mecánicos</a></li>
-            <li><a href="reportes.html">Reportes</a></li>
-            <li><a href="documentos.html">Documentos</a></li>
-            <li><a href="stock.html">Stock</a></li>
+        <ul class="nav-menu" id="mainNav">
+            <li><a href="#" class="active" data-tab="dashboard">Dashboard</a></li>
+            <li><a href="#" data-tab="vehiculos">Vehículos <span id="vehPendNavLabel" class="veh-nav-indicator is-hidden">(0)</span></a></li>
+            <li><a href="#" data-tab="ordenes-trabajo">Ordenes de Trabajo</a></li>
+            <li><a href="#" data-tab="verificaciones">Verificaciones <span id="verificacionesPendNavLabel" class="veh-nav-indicator is-hidden">(0)</span></a></li>
+            <li><a href="#" data-tab="mecanicos">Mecánicos</a></li>
+            <li><a href="#" data-tab="reportes">Reportes</a></li>
+            <li><a href="#" data-tab="stock">Stock</a></li>
+            <li><a href="#" data-tab="historial-solicitudes">Historiales</a></li>
         </ul>
     </nav>
 
     <main class="main-content">
-        <div class="page-title">
-            <h2>Dashboard Jefe de Taller</h2>
-            <div class="quick-actions">
-                <button class="btn btn-primary" onclick="openNuevoIngreso()">Nuevo Ingreso</button>
-                <button class="btn btn-success" onclick="openAsignarMecanico()">Asignar Mecánico</button>
-                <button class="btn btn-warning" onclick="openControlCalidad()">Control de Calidad</button>
-                <button class="btn btn-danger" onclick="generarReporte()">Reporte Diario</button>
-                <button class="btn btn-primary" onclick="window.location.href='reportes.html'">Generar Reportes</button>
-            </div>
-        </div>
+        <div id="mainStatus" class="status hidden"></div>
 
-        <div class="stats-grid">
-            <div class="stat-card">
-                <h3>Vehículos en Taller</h3>
-                <div class="stat-number" id="total-vehiculos">15</div>
+        <section id="tab-dashboard" class="tab active">
+            <div class="page-title">
+                <h2>Dashboard Jefe de Taller</h2>
             </div>
-            <div class="stat-card">
-                <h3>En Proceso de Reparación</h3>
-                <div class="stat-number" id="vehiculos-proceso">10</div>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3 class="stat-number" id="total-vehiculos">...</h3>
+                    <p>Vehículos en Taller</p>
+                </div>
+                <div class="stat-card">
+                    <h3 class="stat-number" id="vehiculos-proceso">...</h3>
+                    <p>En Proceso</p>
+                </div>
+                <div class="stat-card">
+                    <h3 class="stat-number" id="completados-hoy">...</h3>
+                    <p>Completados Hoy</p>
+                </div>
+                <div class="stat-card">
+                    <h3 class="stat-number" id="pendientes-aprobacion">...</h3>
+                    <p>Pend. Aprobación</p>
+                </div>
             </div>
-            <div class="stat-card">
-                <h3>Completados Hoy</h3>
-                <div class="stat-number" id="completados-hoy">5</div>
-            </div>
-            <div class="stat-card">
-                <h3>Pendientes de Aprobación</h3>
-                <div class="stat-number" id="pendientes-aprobacion">3</div>
-            </div>
-        </div>
 
-        <div class="table-container">
-            <h3 style="padding: 15px; background: #f8f9fa; border-bottom: 1px solid #eee;">Vehículos en Taller</h3>
-            <table id="tabla-vehiculos">
-                <thead>
-                    <tr>
-                        <th>Patente</th>
-                        <th>Modelo</th>
-                        <th>Mecánico Asignado</th>
-                        <th>Fecha Ingreso</th>
-                        <th>Estado</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr data-id="1">
-                        <td>BKXL45</td>
-                        <td>Volvo FH16</td>
-                        <td>Juan Pérez</td>
-                        <td>15/11/2025</td>
-                        <td><span class="status-badge status-proceso">En Proceso</span></td>
-                        <td>
-                            <button class="btn btn-primary btn-sm" onclick="verVehiculo(1)">Ver</button>
-                            <button class="btn btn-warning btn-sm" onclick="reasignarMecanico(1)">Reasignar</button>
-                        </td>
-                    </tr>
-                    <tr data-id="2">
-                        <td>AFGH78</td>
-                        <td>Mercedes Actros</td>
-                        <td>María González</td>
-                        <td>14/11/2025</td>
-                        <td><span class="status-badge status-pendiente">Pendiente</span></td>
-                        <td>
-                            <button class="btn btn-primary btn-sm" onclick="verVehiculo(2)">Ver</button>
-                            <button class="btn btn-warning btn-sm" onclick="reasignarMecanico(2)">Reasignar</button>
-                        </td>
-                    </tr>
-                    <tr data-id="3">
-                        <td>CDJK23</td>
-                        <td>Scania R500</td>
-                        <td>Luis Martínez</td>
-                        <td>13/11/2025</td>
-                        <td><span class="status-badge status-completado">Completado</span></td>
-                        <td>
-                            <button class="btn btn-primary btn-sm" onclick="verVehiculo(3)">Ver</button>
-                            <button class="btn btn-success btn-sm" onclick="aprobarVehiculo(3)">Aprobar</button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+            <div class="page-title" style="margin-top: 30px;">
+                <h3>Solicitudes Recibidas</h3>
+                <div>
+                    <button class="btn btn-primary" onclick="solReload()">Actualizar</button>
+                </div>
+            </div>
+            
+            <div class="solicitudes-sections">
+                <div class="solicitudes-section">
+                    <h4 class="solicitudes-section-title">Solicitudes de Choferes</h4>
+                    <div id="solicitudesChoferesList" class="task-list solicitud-cards"></div>
+                </div>
+                
+                <div class="solicitudes-section">
+                    <h4 class="solicitudes-section-title">Solicitudes de Mecánicos</h4>
+                    <div id="solicitudesMecanicosList" class="task-list solicitud-cards"></div>
+                </div>
+            </div>
+            
+            <!-- Mantener el contenedor original para compatibilidad -->
+            <div id="solicitudesList" class="task-list solicitud-cards" style="display: none;">
+                <!-- Template para card de solicitud (oculto) -->
+                <!-- 
+                    INSTRUCCIONES PARA PERSONALIZAR:
+                    - Puedes modificar completamente la estructura HTML de este template
+                    - Usa data-sol-* attributes para marcar dónde se insertarán los valores
+                    - El JavaScript solo reemplazará el contenido de elementos con data-sol-* attributes
+                    - Puedes agregar clases CSS, estilos inline, o cualquier HTML personalizado
+                    - Los elementos sin data-sol-* se mantendrán tal cual los definas
+                -->
+                <div id="solicitudCardTemplate" class="task-card solicitud-card" style="display: none;" data-status="" data-id="">
+                    <div class="solicitud-card__header">
+                        <h4 data-sol="patente">Vehículo sin patente</h4>
+                        <span class="status-badge" data-sol="badge-class">Pendiente</span>
+                    </div>
+                    <div class="sol-emergencia-pill" data-sol-show-if="emergencia" style="display: none;">
+                        <div class="solicitud-pill">🚨 Emergencia</div>
+                    </div>
+                    <p><strong>Chofer:</strong> <span data-sol="chofer">N/A</span></p>
+                    <p><strong>Tipo:</strong> <span data-sol="tipo">-</span></p>
+                    <p data-sol="descripcion">Descripción del problema...</p>
+                    <footer>
+                        <span data-sol="fecha">Fecha</span>
+                        <button class="btn btn-danger btn-sm solicitud-delete" data-sol-show-if="esFinal" style="display: none;" data-sol-onclick="eliminar">✕</button>
+                    </footer>
+                </div>
+            </div>
+        </section>
 
-        <div class="table-container">
-            <h3 style="padding: 15px; background: #f8f9fa; border-bottom: 1px solid #eee;">Mecánicos - Carga de Trabajo</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Mecánico</th>
-                        <th>Vehículos Asignados</th>
-                        <th>En Proceso</th>
-                        <th>Completados</th>
-                        <th>Eficiencia</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Juan Pérez</td>
-                        <td>4</td>
-                        <td>3</td>
-                        <td>1</td>
-                        <td>85%</td>
-                        <td>
-                            <button class="btn btn-primary btn-sm" onclick="verDetalleMecanico('Juan Pérez')">Detalle</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>María González</td>
-                        <td>3</td>
-                        <td>2</td>
-                        <td>1</td>
-                        <td>90%</td>
-                        <td>
-                            <button class="btn btn-primary btn-sm" onclick="verDetalleMecanico('María González')">Detalle</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Luis Martínez</td>
-                        <td>5</td>
-                        <td>2</td>
-                        <td>3</td>
-                        <td>78%</td>
-                        <td>
-                            <button class="btn btn-primary btn-sm" onclick="verDetalleMecanico('Luis Martínez')">Detalle</button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+        <section id="tab-vehiculos" class="tab">
+            <div id="vehicles-container-jefe"></div>
+        </section>
+
+        <section id="tab-ordenes-trabajo" class="tab">
+            <div class="page-title">
+                <h2>Gestión de Órdenes de Trabajo</h2>
+                <div class="quick-actions">
+                    <button class="btn btn-success" onclick="otReload()">Actualizar Lista</button>
+                </div>
+            </div>
+            <div class="table-container">
+                <div style="padding: 15px 25px; background:#f8f9fa; border-bottom:1px solid #eee; display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
+                    <div style="flex: 1; min-width: 200px;">
+                        <input type="text" id="otSearchInput" placeholder="Buscar por OT, patente o mecánico..." style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;" />
+                    </div>
+                    <div>
+                        <select id="otEstadoFilter" style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
+                            <option value="">Todos los estados</option>
+                            <option value="PENDIENTE">Pendiente</option>
+                            <option value="APROBADO">Aprobado</option>
+                            <option value="EN_PROCESO">En Proceso</option>
+                            <option value="ESPERA_REPUESTOS">Espera Repuestos</option>
+                            <option value="LISTO">Listo</option>
+                            <option value="PENDIENTE_VERIFICACION">Pendiente Verificación</option>
+                            <option value="COMPLETADO">Completado</option>
+                        </select>
+                    </div>
+                    <div>
+                        <input type="date" id="otFechaDesde" style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;" />
+                    </div>
+                    <div>
+                        <input type="date" id="otFechaHasta" style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;" />
+                    </div>
+                    <div>
+                        <button class="btn btn-primary" onclick="applyOtFilters()">Filtrar</button>
+                        <button class="btn btn-secondary" onclick="clearOtFilters()" style="margin-left: 8px;">Limpiar</button>
+                    </div>
+                </div>
+                <h3 style="padding: 20px 25px; background:#f8f9fa; border-bottom:1px solid #eee;">Listado de Órdenes de Trabajo</h3>
+                <table id="otTabla">
+                    <thead>
+                        <tr>
+                            <th>N° OT</th>
+                            <th>Vehículo</th>
+                            <th>Problema</th>
+                            <th>Mecánico</th>
+                            <th>Prioridad</th>
+                            <th>Estado</th>
+                            <th>Fecha Creación</th>
+                            <th>Fecha Estimada Término</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="otTBody">
+                    </tbody>
+                </table>
+                <div id="otPagination" style="margin-top: 20px;"></div>
+            </div>
+        </section>
+
+        <section id="tab-verificaciones" class="tab">
+            <div class="page-title">
+                <h2>OTs Pendientes de Verificación</h2>
+                <div>
+                    <button class="btn btn-primary" onclick="verificacionesReload()">Actualizar</button>
+                </div>
+            </div>
+            <div class="table-container">
+                <h3 style="padding: 20px 25px; background:#f8f9fa; border-bottom:1px solid #eee;">OTs Finalizadas por Mecánicos</h3>
+                <table id="verificacionesTabla">
+                    <thead>
+                        <tr>
+                            <th>OT</th>
+                            <th>Vehículo</th>
+                            <th>Mecánico</th>
+                            <th>Fecha Finalización</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="verificacionesTBody">
+                        <tr><td colspan="5" style="text-align:center;padding:20px;">Cargando...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="tab-mecanicos" class="tab">
+            <div class="page-title">
+                <h2>Gestión de Mecánicos</h2>
+            </div>      
+
+            <div class="table-container">
+                <h3 style="padding: 20px 25px; background:#f8f9fa; border-bottom:1px solid #eee;">
+                    Listado de Usuarios
+                </h3>
+                <table id="mecTabla">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre Completo</th>
+                            <th>Email</th>
+                            <th>RUT</th>
+                            <th>Estado</th>
+                            <th>Horario</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="mecTBody">
+                        <!-- Template para fila de mecánico (oculto) -->
+                        <tr id="mecRowTemplate" style="display: none;" data-id="">
+                            <td class="mec-id"></td>
+                            <td class="mec-nombre"></td>
+                            <td class="mec-email"></td>
+                            <td class="mec-rut"></td>
+                            <td class="mec-estado"></td>
+                            <td class="mec-horario"></td>
+                            <td class="mec-acciones"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="tab-talleres" class="tab">
+            <div style="padding:20px;">(Talleres — en construcción)</div>
+        </section>
+        <section id="tab-reportes" class="tab">
+            <div class="page-title">
+                <h2>Reportes y Estadísticas</h2>
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #333;">Seleccionar Tipo de Reporte:</label>
+                <select id="reporte-type-select-jefe" style="padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; width: 100%; max-width: 400px;">
+                    <!-- Las opciones se cargarán dinámicamente según el rol del usuario -->
+                </select>
+            </div>
+
+            <!-- Contenedor para los reportes (universalizado) -->
+            <div id="reports-container-jefe"></div>
+        </section>
+        <section id="tab-documentos" class="tab">
+            <div style="padding:20px;">(Documentos — en construcción)</div>
+        </section>
+        <section id="tab-stock" class="tab">
+            <div class="page-title">
+                <h2>Gestión de Stock</h2>
+                <div class="quick-actions">
+                    <button class="btn btn-success" onclick="stockJefeReload()">Actualizar</button>
+                </div>
+            </div>
+
+            <div class="stats-grid" style="margin-bottom: 30px;">
+                <div class="stat-card">
+                    <h3 class="stat-number" id="stock-total-repuestos">...</h3>
+                    <p>Total Repuestos</p>
+                </div>
+                <div class="stat-card">
+                    <h3 class="stat-number" id="stock-bajo-jefe">...</h3>
+                    <p>Stock Bajo</p>
+                </div>
+                <div class="stat-card">
+                    <h3 class="stat-number" id="stock-critico-jefe">...</h3>
+                    <p>Stock Crítico</p>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <h3 style="padding: 20px 25px; background:#f8f9fa; border-bottom:1px solid #eee;">Inventario Actual</h3>
+                <table id="stockJefeTabla">
+                    <thead>
+                        <tr>
+                            <th>SKU</th>
+                            <th>Repuesto</th>
+                            <th>Stock Actual</th>
+                            <th>Mínimo</th>
+                            <th>Máximo</th>
+                            <th>Ubicación</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody id="stockJefeTBody">
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="tab-historial-solicitudes" class="tab">
+            <div class="page-title">
+                <h2>Historiales</h2>
+            </div>
+
+            <div class="table-container" style="background: white; border-radius: 8px; padding: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #333;">Tipo de Historial:</label>
+                    <select id="historial-type-select-jefe" style="padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; width: 100%; max-width: 400px;">
+                        <!-- Las opciones se cargarán dinámicamente según el rol del usuario -->
+                    </select>
+                </div>
+
+                <div id="historial-categoria-filter-wrapper" style="margin-bottom: 20px; display: none;">
+                    <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #333;">Categoría:</label>
+                    <select id="historial-categoria-filter-jefe" style="padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; width: 100%; max-width: 300px;">
+                        <option value="">Todas las solicitudes</option>
+                        <option value="choferes">Solicitudes de Choferes</option>
+                        <option value="mecanicos">Solicitudes de Mecánicos</option>
+                    </select>
+                </div>
+
+                <div id="historial-solicitudes-container"></div>
+            </div>
+        </section>
     </main>
 
-    <!-- Modal Nuevo Ingreso -->
-    <div id="modalNuevoIngreso" class="modal">
+    <div id="modalVehAdd" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>Nuevo Ingreso de Vehículo</h3>
-                <button class="close-btn" onclick="closeModal('modalNuevoIngreso')">&times;</button>
+                <h3>Nuevo Vehículo</h3>
+                <button class="close-btn" onclick="closeModal('modalVehAdd')">&times;</button>
             </div>
-            <form id="formNuevoIngreso">
+            <form id="vehFormAdd">
                 <div class="form-group">
-                    <label for="patente">Patente</label>
-                    <input type="text" id="patente" required>
+                    <label for="veh_add_patente">Patente (*)</label>
+                    <input id="veh_add_patente" required placeholder="ABCD12" />
                 </div>
                 <div class="form-group">
-                    <label for="modelo">Modelo</label>
-                    <input type="text" id="modelo" required>
+                    <label for="veh_add_marca">Marca (*)</label>
+                    <input id="veh_add_marca" required placeholder="Mercedes-Benz" />
                 </div>
                 <div class="form-group">
-                    <label for="problema">Problema Reportado</label>
-                    <textarea id="problema" rows="3" required></textarea>
+                    <label for="veh_add_modelo">Modelo (*)</label>
+                    <input id="veh_add_modelo" required placeholder="Actros 2651" />
                 </div>
                 <div class="form-group">
-                    <label for="taller">Taller</label>
-                    <select id="taller" required>
-                        <option value="">Seleccionar taller</option>
-                        <option value="central">Taller Central</option>
-                        <option value="norte">Taller Norte</option>
-                        <option value="sur">Taller Sur</option>
-                    </select>
+                    <label for="veh_add_anio_modelo">Año</label>
+                    <input id="veh_add_anio_modelo" type="number" placeholder="2020" />
+                </div>
+                <div class="form-group">
+                    <label for="veh_add_vin">VIN (N° Chasis)</label>
+                    <input id="veh_add_vin" placeholder="Opcional..." />
+                </div>
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="veh_add_generar_ot" onchange="toggleOtFields()" />
+                        Generar Orden de Trabajo?
+                    </label>
+                </div>
+                <div id="veh_add_ot_fields" style="display: none;">
+                    <div class="form-group">
+                        <label for="veh_add_problema">Problema (*)</label>
+                        <textarea id="veh_add_problema" rows="3" placeholder="Descripción del problema..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="veh_add_estado_ot">Estado (*)</label>
+                        <select id="veh_add_estado_ot">
+                            <option value="">Seleccione un estado</option>
+                            <option value="PENDIENTE">Pendiente</option>
+                            <option value="EN_PROCESO">En Proceso</option>
+                            <option value="ESPERA_REPUESTOS">Espera Repuestos</option>
+                            <option value="LISTO">Listo</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="veh_add_mecanico">Asignar mecánico (*)</label>
+                        <select id="veh_add_mecanico">
+                            <option value="">Selecciona un mecánico</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Fechas programadas (inicio y término) (*)</label>
+                        <div class="date-range">
+                            <input type="date" id="veh_add_fecha_inicio">
+                            <span class="date-range__divider">→</span>
+                            <input type="date" id="veh_add_fecha_fin">
+                        </div>
+                    </div>
                 </div>
                 <div class="form-actions">
-                    <button type="button" class="btn btn-warning" onclick="closeModal('modalNuevoIngreso')">Cancelar</button>
-                    <button type="submit" class="btn btn-primary">Guardar Ingreso</button>
+                    <div id="vehAddMsg" class="status hidden"></div>
+                    <button type="button" class="btn btn-warning" onclick="closeModal('modalVehAdd')">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Guardar Vehículo</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Modal Reasignar Mecánico -->
-    <div id="modalReasignar" class="modal">
+    <div id="modalVehEdit" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>Reasignar Mecánico</h3>
-                <button class="close-btn" onclick="closeModal('modalReasignar')">&times;</button>
+                <h3>Editar Vehículo</h3>
+                <button class="close-btn" onclick="closeModal('modalVehEdit')">&times;</button>
             </div>
-            <form id="formReasignar">
-                <input type="hidden" id="vehiculoId">
+            <form id="vehFormEdit">
+                <input type="hidden" id="veh_edit_id" />
                 <div class="form-group">
-                    <label>Vehículo: <span id="vehiculoInfo"></span></label>
+                    <label for="veh_edit_patente">Patente (*)</label>
+                    <input id="veh_edit_patente" required placeholder="ABCD12" />
                 </div>
                 <div class="form-group">
-                    <label for="nuevoMecanico">Nuevo Mecánico</label>
-                    <select id="nuevoMecanico" required>
-                        <option value="">Seleccionar mecánico</option>
-                        <option value="Juan Pérez">Juan Pérez</option>
-                        <option value="María González">María González</option>
-                        <option value="Luis Martínez">Luis Martínez</option>
-                        <option value="Ana Rodríguez">Ana Rodríguez</option>
+                    <label for="veh_edit_marca">Marca (*)</label>
+                    <input id="veh_edit_marca" required placeholder="Mercedes-Benz" />
+                </div>
+                <div class="form-group">
+                    <label for="veh_edit_modelo">Modelo (*)</label>
+                    <input id="veh_edit_modelo" required placeholder="Actros 2651" />
+                </div>
+                <div class="form-group">
+                    <label for="veh_edit_anio_modelo">Año</label>
+                    <input id="veh_edit_anio_modelo" type="number" placeholder="2020" />
+                </div>
+                <div class="form-group">
+                    <label for="veh_edit_vin">VIN (N° Chasis)</label>
+                    <input id="veh_edit_vin" placeholder="Opcional..." />
+                </div>
+                <div class="form-group">
+                    <label for="veh_edit_estado">Estado (*)</label>
+                    <select id="veh_edit_estado" required>
+                        <option value="OPERATIVO">Operativo</option>
+                        <option value="EN_TALLER">En Taller</option>
+                        <option value="MANTENCION">Mantención</option>
+                        <option value="INACTIVO">Inactivo</option>
                     </select>
                 </div>
                 <div class="form-actions">
-                    <button type="button" class="btn btn-warning" onclick="closeModal('modalReasignar')">Cancelar</button>
-                    <button type="submit" class="btn btn-primary">Reasignar</button>
+                    <div id="vehEditMsg" class="status hidden"></div>
+                    <button type="button" class="btn btn-danger" onclick="vehConfirmDelete()">Eliminar</button>
+                    <div style="flex:1"></div>
+                    <button type="button" class="btn btn-warning" onclick="closeModal('modalVehEdit')">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <script>
-        // Funciones básicas
-        function logout() {
-            if (confirm('¿Está seguro de que desea cerrar sesión?')) {
-                window.location.href = 'login.html';
-            }
-        }
+    <div id="modalOtEdit" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Editar Orden de Trabajo</h3>
+                <button class="close-btn" onclick="closeModal('modalOtEdit')">&times;</button>
+            </div>
+            <form id="otFormEdit">
+                <input type="hidden" id="ot_edit_id" />
+                <div class="form-info" style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 4px;">
+                    <p><strong>N° OT:</strong> <span id="ot_edit_numero_display">—</span></p>
+                    <p><strong>Vehículo:</strong> <span id="ot_edit_vehiculo_display">—</span></p>
+                    <p><strong>Mecánico:</strong> <span id="ot_edit_mecanico_display">—</span></p>
+                </div>
+                <div class="form-group">
+                    <label for="ot_edit_problema">Descripción</label>
+                    <textarea id="ot_edit_problema" rows="3" placeholder="Resumen del trabajo"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="ot_edit_prioridad">Prioridad</label>
+                    <select id="ot_edit_prioridad">
+                        <option value="NORMAL">Normal</option>
+                        <option value="ALTA">Alta</option>
+                        <option value="URGENTE">Urgente</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="ot_edit_estado">Estado</label>
+                    <select id="ot_edit_estado">
+                        <option value="PENDIENTE">Pendiente</option>
+                        <option value="APROBADO">Aprobado</option>
+                        <option value="EN_PROCESO">En Proceso</option>
+                        <option value="LISTO">Listo</option>
+                        <option value="COMPLETADO">Completado</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Fechas planificadas</label>
+                    <div class="date-range">
+                        <input type="date" id="ot_edit_fecha_inicio">
+                        <span class="date-range__divider">→</span>
+                        <input type="date" id="ot_edit_fecha_fin">
+                    </div>
+                    <div class="time-range">
+                        <div class="time-field">
+                            <label for="ot_edit_hora_inicio">Hora de inicio</label>
+                            <div class="time-picker-wrapper">
+                                <input type="text" id="ot_edit_hora_inicio" class="time-picker-input" placeholder="HH:MM" readonly>
+                                <div class="time-picker-popover picker" id="ot_edit_hora_inicio_picker" aria-hidden="true">
+                                    <div class="time-wrap">
+                                        <div class="time">
+                                            <span class="part hour active" data-picker="ot_edit_hora_inicio">9</span>
+                                            <span>:</span>
+                                            <span class="part min" data-picker="ot_edit_hora_inicio">00</span>
+                                        </div>
+                                    </div>
+                                    <div class="face-wrap">
+                                        <div class="face">
+                                            <span class="face-set hour" data-picker="ot_edit_hora_inicio">
+                                                <div class="handle-bar"></div>
+                                                <div class="face-number" data-css-time="1">1</div>
+                                                <div class="face-number" data-css-time="2">2</div>
+                                                <div class="face-number" data-css-time="3">3</div>
+                                                <div class="face-number" data-css-time="4">4</div>
+                                                <div class="face-number" data-css-time="5">5</div>
+                                                <div class="face-number" data-css-time="6">6</div>
+                                                <div class="face-number" data-css-time="7">7</div>
+                                                <div class="face-number" data-css-time="8">8</div>
+                                                <div class="face-number" data-css-time="9">9</div>
+                                                <div class="face-number" data-css-time="10">10</div>
+                                                <div class="face-number" data-css-time="11">11</div>
+                                                <div class="face-number" data-css-time="0">12</div>
+                                                <div class="handle">
+                                                    <div class="handle-spot"></div>
+                                                </div>
+                                            </span>
+                                            <span class="face-set min face-off" data-picker="ot_edit_hora_inicio">
+                                                <div class="handle-bar"></div>
+                                                <div class="face-number" data-css-time="0">00</div>
+                                                <div class="face-number" data-css-time="1">05</div>
+                                                <div class="face-number" data-css-time="2">10</div>
+                                                <div class="face-number" data-css-time="3">15</div>
+                                                <div class="face-number" data-css-time="4">20</div>
+                                                <div class="face-number" data-css-time="5">25</div>
+                                                <div class="face-number" data-css-time="6">30</div>
+                                                <div class="face-number" data-css-time="7">35</div>
+                                                <div class="face-number" data-css-time="8">40</div>
+                                                <div class="face-number" data-css-time="9">45</div>
+                                                <div class="face-number" data-css-time="10">50</div>
+                                                <div class="face-number" data-css-time="11">55</div>
+                                                <div class="handle">
+                                                    <div class="handle-spot"></div>
+                                                </div>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="hour-24-controls" data-picker="ot_edit_hora_inicio">
+                                        <button type="button" class="hour-btn am-pm-btn am" data-hour="0">AM</button>
+                                        <button type="button" class="hour-btn am-pm-btn pm" data-hour="12">PM</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="time-field">
+                            <label for="ot_edit_hora_fin">Hora de término</label>
+                            <div class="time-picker-wrapper">
+                                <input type="text" id="ot_edit_hora_fin" class="time-picker-input" placeholder="HH:MM" readonly>
+                                <div class="time-picker-popover picker" id="ot_edit_hora_fin_picker" aria-hidden="true">
+                                    <div class="time-wrap">
+                                        <div class="time">
+                                            <span class="part hour active" data-picker="ot_edit_hora_fin">18</span>
+                                            <span>:</span>
+                                            <span class="part min" data-picker="ot_edit_hora_fin">00</span>
+                                        </div>
+                                    </div>
+                                    <div class="face-wrap">
+                                        <div class="face">
+                                            <span class="face-set hour" data-picker="ot_edit_hora_fin">
+                                                <div class="handle-bar"></div>
+                                                <div class="face-number" data-css-time="1">1</div>
+                                                <div class="face-number" data-css-time="2">2</div>
+                                                <div class="face-number" data-css-time="3">3</div>
+                                                <div class="face-number" data-css-time="4">4</div>
+                                                <div class="face-number" data-css-time="5">5</div>
+                                                <div class="face-number" data-css-time="6">6</div>
+                                                <div class="face-number" data-css-time="7">7</div>
+                                                <div class="face-number" data-css-time="8">8</div>
+                                                <div class="face-number" data-css-time="9">9</div>
+                                                <div class="face-number" data-css-time="10">10</div>
+                                                <div class="face-number" data-css-time="11">11</div>
+                                                <div class="face-number" data-css-time="0">12</div>
+                                                <div class="handle">
+                                                    <div class="handle-spot"></div>
+                                                </div>
+                                            </span>
+                                            <span class="face-set min face-off" data-picker="ot_edit_hora_fin">
+                                                <div class="handle-bar"></div>
+                                                <div class="face-number" data-css-time="0">00</div>
+                                                <div class="face-number" data-css-time="1">05</div>
+                                                <div class="face-number" data-css-time="2">10</div>
+                                                <div class="face-number" data-css-time="3">15</div>
+                                                <div class="face-number" data-css-time="4">20</div>
+                                                <div class="face-number" data-css-time="5">25</div>
+                                                <div class="face-number" data-css-time="6">30</div>
+                                                <div class="face-number" data-css-time="7">35</div>
+                                                <div class="face-number" data-css-time="8">40</div>
+                                                <div class="face-number" data-css-time="9">45</div>
+                                                <div class="face-number" data-css-time="10">50</div>
+                                                <div class="face-number" data-css-time="11">55</div>
+                                                <div class="handle">
+                                                    <div class="handle-spot"></div>
+                                                </div>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="hour-24-controls" data-picker="ot_edit_hora_fin">
+                                        <button type="button" class="hour-btn am-pm-btn am" data-hour="0">AM</button>
+                                        <button type="button" class="hour-btn am-pm-btn pm" data-hour="12">PM</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <div id="otEditMsg" class="status hidden"></div>
+                    <button type="button" class="btn btn-warning" onclick="closeModal('modalOtEdit')">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
-        // Funciones de modal
-        function openModal(modalId) {
-            document.getElementById(modalId).style.display = 'flex';
-        }
+    <div id="modalLogoutConfirm" class="modal" aria-hidden="true" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Confirmar Cierre de Sesión</h3>
+                <button class="close-btn">&times;</button>
+            </div>
+            <div style="padding: 25px;">
+                <p>¿Está seguro de que desea cerrar sesión?</p>
+                <div class="form-actions" style="border-top: none; padding-top: 20px;">
+                    <button type="button" class="btn btn-warning btn-secondary">Cancelar</button>
+                    <button type="button" class="btn btn-danger" id="btnConfirmLogout">Cerrar Sesión</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
-        function closeModal(modalId) {
-            document.getElementById(modalId).style.display = 'none';
-        }
+    <div id="modalMecanicoHorario" class="modal">
+        <div class="modal-content modal-lg">
+            <div class="modal-header">
+                <h3>Horario del Mecánico</h3>
+                <button class="close-btn" onclick="closeModal('modalMecanicoHorario')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="mec-modal-head">
+                    <div>
+                        <p class="modal-label">Mecánico</p>
+                        <h4 id="mecModalNombre">—</h4>
+                    </div>
+                    <div class="mec-modal-contact">
+                        <p class="modal-label">Contacto</p>
+                        <p id="mecModalEmail">—</p>
+                    </div>
+                </div>
+                <div class="schedule-wrapper">
+                    <table class="schedule-table">
+                        <thead>
+                            <tr>
+                                <th>Día</th>
+                                <th>Jornada</th>
+                                <th>Colación</th>
+                            </tr>
+                        </thead>
+                        <tbody id="mecHorarioTableBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" onclick="closeModal('modalMecanicoHorario')">Cerrar</button>
+            </div>
+        </div>
+    </div>
 
-        // Funcionalidades específicas
-        function openNuevoIngreso() {
-            openModal('modalNuevoIngreso');
-        }
+    <div id="modalGenerarOT" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Generar Orden de Trabajo</h3>
+                <button class="close-btn" onclick="closeModal('modalGenerarOT')">&times;</button>
+            </div>
+            <form id="otFormGenerar">
+                <input type="hidden" id="ot_gen_vehiculo_id" />
+                <div class="form-group">
+                    <label for="ot_gen_vehiculo_patente">Vehículo</label>
+                    <input id="ot_gen_vehiculo_patente" readonly />
+                </div>
+                <div class="form-group">
+                    <label for="ot_gen_solicitud">Solicitud existente (opcional)</label>
+                    <select id="ot_gen_solicitud">
+                        <option value="">-- Sin solicitud --</option>
+                    </select>
+                    <div class="form-hint">Selecciona una solicitud aprobada o deja vacío para crear una nueva.</div>
+                </div>
+                <div class="form-group" id="ot_new_fields">
+                    <label>
+                        <input type="checkbox" id="ot_new_emergencia"> Es emergencia
+                    </label>
+                    <div id="ot_new_evidencias_wrapper" class="ot-conditional-field">
+                        <label for="ot_new_evidencia" style="display:block;margin-top:10px;">Evidencias (1 a 5 archivos)</label>
+                        <input type="file" id="ot_new_evidencia" accept="image/jpeg,image/png,image/webp,application/pdf,text/plain,.jpg,.jpeg,.png,.webp,.pdf,.txt,.doc,.docx" multiple>
+                        <div class="form-hint" id="ot_new_evidencia_resumen">Formatos permitidos: JPG, PNG, WEBP, PDF, TXT, DOC, DOCX. Debes adjuntar al menos un archivo.</div>
+                    </div>
+                </div>
+                <div class="form-group ot-conditional-field" id="ot_gen_problema_wrapper">
+                    <label for="ot_gen_problema">Problema (*)</label>
+                    <textarea id="ot_gen_problema" rows="3" placeholder="Descripción del problema..." required></textarea>
+                </div>
+                <div class="form-group ot-conditional-field" id="ot_gen_mecanico_wrapper">
+                    <label for="ot_gen_mecanico">Asignar mecánico (*)</label>
+                    <select id="ot_gen_mecanico" required>
+                        <option value="">Selecciona un mecánico</option>
+                    </select>
+                    <div class="form-hint">Selecciona quién realizará la orden.</div>
+                </div>
+                <div class="form-group ot-conditional-field" id="ot_gen_prioridad_wrapper">
+                    <label for="ot_gen_prioridad">Prioridad de la OT</label>
+                    <select id="ot_gen_prioridad">
+                        <option value="NORMAL">Normal</option>
+                        <option value="ALTA">Alta</option>
+                        <option value="URGENTE">Urgente</option>
+                    </select>
+                </div>
+                <div class="form-group ot-conditional-field" id="ot_gen_fechas_wrapper">
+                    <label>Fechas programadas (inicio y término) (*)</label>
+                    <div class="date-range-wrapper">
+                        <div class="date-range" id="otDateRange" tabindex="0" role="button" aria-haspopup="dialog" aria-expanded="false">
+                            <div class="date-range__field">
+                                <span class="date-range__label">Inicio</span>
+                                <input type="text" id="ot_gen_fecha_inicio_display" placeholder="DD/MM" readonly>
+                            </div>
+                            <span class="date-range__divider">→</span>
+                            <div class="date-range__field">
+                                <span class="date-range__label">Término</span>
+                                <input type="text" id="ot_gen_fecha_fin_display" placeholder="DD/MM" readonly>
+                            </div>
+                        </div>
+                        <div class="date-picker-popover" id="otDatePicker" aria-hidden="true"></div>
+                    </div>
+                    <input type="hidden" id="ot_gen_fecha_inicio">
+                    <input type="hidden" id="ot_gen_fecha_fin">
+                    <div class="time-range">
+                        <div class="time-field">
+                            <label for="ot_gen_hora_inicio">Hora de inicio</label>
+                            <div class="time-picker-wrapper">
+                                <input type="text" id="ot_gen_hora_inicio" class="time-picker-input" placeholder="HH:MM" readonly>
+                                <div class="time-picker-popover picker" id="ot_gen_hora_inicio_picker" aria-hidden="true">
+                                    <div class="time-wrap">
+                                        <div class="time">
+                                            <span class="part hour active" data-picker="ot_gen_hora_inicio">9</span>
+                                            <span>:</span>
+                                            <span class="part min" data-picker="ot_gen_hora_inicio">00</span>
+                                        </div>
+                                    </div>
+                                    <div class="face-wrap">
+                                        <div class="face">
+                                            <span class="face-set hour" data-picker="ot_gen_hora_inicio">
+                                                <div class="handle-bar"></div>
+                                                <div class="face-number" data-css-time="1">1</div>
+                                                <div class="face-number" data-css-time="2">2</div>
+                                                <div class="face-number" data-css-time="3">3</div>
+                                                <div class="face-number" data-css-time="4">4</div>
+                                                <div class="face-number" data-css-time="5">5</div>
+                                                <div class="face-number" data-css-time="6">6</div>
+                                                <div class="face-number" data-css-time="7">7</div>
+                                                <div class="face-number" data-css-time="8">8</div>
+                                                <div class="face-number" data-css-time="9">9</div>
+                                                <div class="face-number" data-css-time="10">10</div>
+                                                <div class="face-number" data-css-time="11">11</div>
+                                                <div class="face-number" data-css-time="0">12</div>
+                                                <div class="handle">
+                                                    <div class="handle-spot"></div>
+                                                </div>
+                                            </span>
+                                            <span class="face-set min face-off" data-picker="ot_gen_hora_inicio">
+                                                <div class="handle-bar"></div>
+                                                <div class="face-number" data-css-time="0">00</div>
+                                                <div class="face-number" data-css-time="1">05</div>
+                                                <div class="face-number" data-css-time="2">10</div>
+                                                <div class="face-number" data-css-time="3">15</div>
+                                                <div class="face-number" data-css-time="4">20</div>
+                                                <div class="face-number" data-css-time="5">25</div>
+                                                <div class="face-number" data-css-time="6">30</div>
+                                                <div class="face-number" data-css-time="7">35</div>
+                                                <div class="face-number" data-css-time="8">40</div>
+                                                <div class="face-number" data-css-time="9">45</div>
+                                                <div class="face-number" data-css-time="10">50</div>
+                                                <div class="face-number" data-css-time="11">55</div>
+                                                <div class="handle">
+                                                    <div class="handle-spot"></div>
+                                                </div>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="hour-24-controls" data-picker="ot_gen_hora_inicio">
+                                        <button type="button" class="hour-btn am-pm-btn am" data-hour="0">AM</button>
+                                        <button type="button" class="hour-btn am-pm-btn pm" data-hour="12">PM</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="time-field">
+                            <label for="ot_gen_hora_fin">Hora de término</label>
+                            <div class="time-picker-wrapper">
+                                <input type="text" id="ot_gen_hora_fin" class="time-picker-input" placeholder="HH:MM" readonly>
+                                <div class="time-picker-popover picker" id="ot_gen_hora_fin_picker" aria-hidden="true">
+                                    <div class="time-wrap">
+                                        <div class="time">
+                                            <span class="part hour active" data-picker="ot_gen_hora_fin">18</span>
+                                            <span>:</span>
+                                            <span class="part min" data-picker="ot_gen_hora_fin">00</span>
+                                        </div>
+                                    </div>
+                                    <div class="face-wrap">
+                                        <div class="face">
+                                            <span class="face-set hour" data-picker="ot_gen_hora_fin">
+                                                <div class="handle-bar"></div>
+                                                <div class="face-number" data-css-time="1">1</div>
+                                                <div class="face-number" data-css-time="2">2</div>
+                                                <div class="face-number" data-css-time="3">3</div>
+                                                <div class="face-number" data-css-time="4">4</div>
+                                                <div class="face-number" data-css-time="5">5</div>
+                                                <div class="face-number" data-css-time="6">6</div>
+                                                <div class="face-number" data-css-time="7">7</div>
+                                                <div class="face-number" data-css-time="8">8</div>
+                                                <div class="face-number" data-css-time="9">9</div>
+                                                <div class="face-number" data-css-time="10">10</div>
+                                                <div class="face-number" data-css-time="11">11</div>
+                                                <div class="face-number" data-css-time="0">12</div>
+                                                <div class="handle">
+                                                    <div class="handle-spot"></div>
+                                                </div>
+                                            </span>
+                                            <span class="face-set min face-off" data-picker="ot_gen_hora_fin">
+                                                <div class="handle-bar"></div>
+                                                <div class="face-number" data-css-time="0">00</div>
+                                                <div class="face-number" data-css-time="1">05</div>
+                                                <div class="face-number" data-css-time="2">10</div>
+                                                <div class="face-number" data-css-time="3">15</div>
+                                                <div class="face-number" data-css-time="4">20</div>
+                                                <div class="face-number" data-css-time="5">25</div>
+                                                <div class="face-number" data-css-time="6">30</div>
+                                                <div class="face-number" data-css-time="7">35</div>
+                                                <div class="face-number" data-css-time="8">40</div>
+                                                <div class="face-number" data-css-time="9">45</div>
+                                                <div class="face-number" data-css-time="10">50</div>
+                                                <div class="face-number" data-css-time="11">55</div>
+                                                <div class="handle">
+                                                    <div class="handle-spot"></div>
+                                                </div>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="hour-24-controls" data-picker="ot_gen_hora_fin">
+                                        <button type="button" class="hour-btn am-pm-btn am" data-hour="0">AM</button>
+                                        <button type="button" class="hour-btn am-pm-btn pm" data-hour="12">PM</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-hint">
+                        Selecciona dos fechas en el mismo calendario compartido. Los días resaltados en naranja
+                        indican que el mecánico ya está comprometido con otra orden.
+                    </div>
+                    <div id="ot_gen_schedule_alert" class="schedule-warning hidden"></div>
+                </div>
+                <div class="form-group ot-conditional-field" id="ot_gen_estado_wrapper">
+                    <label for="ot_gen_estado">Estado (*)</label>
+                    <select id="ot_gen_estado" required>
+                        <option value="PENDIENTE">Pendiente</option>
+                        <option value="EN_PROCESO">En Proceso</option>
+                        <option value="ESPERA_REPUESTOS">Espera Repuestos</option>
+                        <option value="LISTO">Listo</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <div id="otGenMsg" class="status hidden"></div>
+                    <button type="button" class="btn btn-warning" onclick="closeModal('modalGenerarOT')">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Generar Orden</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
-        function openAsignarMecanico() {
-            alert('Funcionalidad: Abrir lista de vehículos para asignar mecánico');
-        }
+    <!-- Modal: Revisar y Aprobar OT -->
+    <div id="modalRevisarOT" class="modal">
+        <div class="modal-content" style="max-width: 900px;">
+            <div class="modal-header">
+                <h3>Revisar y Aprobar OT</h3>
+                <button class="close-btn" onclick="closeModal('modalRevisarOT')">&times;</button>
+            </div>
+            <div style="padding: 20px; max-height: 80vh; overflow-y: auto;">
+                <input type="hidden" id="revisar_ot_id" />
+                
+                <div class="form-info" style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 4px;">
+                    <p><strong>OT:</strong> <span id="revisar_ot_numero">—</span></p>
+                    <p><strong>Vehículo:</strong> <span id="revisar_ot_vehiculo">—</span></p>
+                    <p><strong>Mecánico:</strong> <span id="revisar_ot_mecanico">—</span></p>
+                    <p><strong>Fecha Finalización:</strong> <span id="revisar_ot_fecha_finalizacion">—</span></p>
+                </div>
 
-        function openControlCalidad() {
-            alert('Funcionalidad: Abrir panel de control de calidad');
-        }
+                <div class="form-group">
+                    <label><strong>Descripción del Problema Original</strong></label>
+                    <div style="padding: 15px; background: #f8f9fa; border-radius: 4px; margin-top: 10px;">
+                        <p id="revisar_ot_problema" style="margin: 0; white-space: pre-wrap;"></p>
+                    </div>
+                </div>
 
-        function generarReporte() {
-            alert('Reporte diario generado exitosamente');
-        }
+                <div class="form-group" id="revisar_ot_evidencias_originales_group" style="display: none;">
+                    <label><strong>Evidencias Originales</strong></label>
+                    <div id="revisar_ot_evidencias_originales" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; margin-top: 10px;">
+                        <!-- Se llenará dinámicamente -->
+                    </div>
+                </div>
 
-        function verVehiculo(id) {
-            const vehiculo = document.querySelector(`tr[data-id="${id}"]`);
-            const patente = vehiculo.cells[0].textContent;
-            const modelo = vehiculo.cells[1].textContent;
-            alert(`Detalles del Vehículo:\n\nPatente: ${patente}\nModelo: ${modelo}\nID: ${id}`);
-        }
+                <div class="form-group">
+                    <label><strong>Descripción del Proceso Realizado (Mecánico)</strong></label>
+                    <div style="padding: 15px; background: #e8f5e9; border-radius: 4px; margin-top: 10px;">
+                        <p id="revisar_ot_proceso_realizado" style="margin: 0; white-space: pre-wrap;"></p>
+                    </div>
+                </div>
 
-        function reasignarMecanico(id) {
-            const vehiculo = document.querySelector(`tr[data-id="${id}"]`);
-            const patente = vehiculo.cells[0].textContent;
-            const modelo = vehiculo.cells[1].textContent;
+                <div class="form-group" id="revisar_ot_evidencias_cierre_group" style="display: none;">
+                    <label><strong>Evidencias del Cierre (Mecánico)</strong></label>
+                    <div id="revisar_ot_evidencias_cierre" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; margin-top: 10px;">
+                        <!-- Se llenará dinámicamente -->
+                    </div>
+                </div>
 
-            document.getElementById('vehiculoId').value = id;
-            document.getElementById('vehiculoInfo').textContent = `${patente} - ${modelo}`;
-            openModal('modalReasignar');
-        }
+                <div class="form-group" id="revisar_ot_comentario_rechazo_group" style="display: none; margin-top: 20px;">
+                    <label for="revisar_ot_comentario_rechazo"><strong>Comentario de Rechazo (*)</strong></label>
+                    <textarea id="revisar_ot_comentario_rechazo" rows="4" placeholder="Explica por qué se rechaza el trabajo y qué necesita ser corregido..." style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;"></textarea>
+                    <div class="form-hint" style="margin-top: 5px; color: #666; font-size: 12px;">Este comentario será visible para el mecánico y le ayudará a corregir el trabajo.</div>
+                </div>
 
-        function aprobarVehiculo(id) {
-            if (confirm('¿Está seguro de aprobar este vehículo?')) {
-                const vehiculo = document.querySelector(`tr[data-id="${id}"]`);
-                vehiculo.cells[4].innerHTML = '<span class="status-badge status-completado">Aprobado</span>';
-                alert('Vehículo aprobado exitosamente');
-            }
-        }
+                <div class="form-actions" style="border-top: 1px solid #eee; padding-top: 20px; margin-top: 20px;">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('modalRevisarOT')">Cerrar</button>
+                    <button type="button" class="btn btn-danger" id="btnRechazarOT" onclick="toggleRechazarOT()">Rechazar</button>
+                    <button type="button" class="btn btn-success" id="btnAprobarOT" onclick="openAprobarOTModal()">Aprobar y Firmar OT</button>
+                    <button type="button" class="btn btn-danger" id="btnConfirmarRechazo" onclick="rechazarOT()" style="display: none;">Confirmar Rechazo</button>
+                </div>
+                <div id="revisarOTMsg" class="status hidden" style="margin-top: 15px;"></div>
+            </div>
+        </div>
+    </div>
 
-        function verDetalleMecanico(nombre) {
-            alert(`Detalles del Mecánico:\n\nNombre: ${nombre}\nEspecialidad: Diésel\nAños de experiencia: 5\nDisponibilidad: Full-time`);
-        }
+    <!-- Modal: Confirmar Contraseña para Aprobar OT -->
+    <div id="modalAprobarOT" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Confirmar Contraseña</h3>
+                <button class="close-btn" onclick="closeModal('modalAprobarOT')">&times;</button>
+            </div>
+            <form id="aprobarOTForm">
+                <input type="hidden" id="aprobar_ot_id" />
+                <div class="form-group">
+                    <label for="aprobar_ot_password">Contraseña (*)</label>
+                    <input type="password" id="aprobar_ot_password" required placeholder="Ingresa tu contraseña para confirmar" />
+                    <div class="form-hint">Por seguridad, debes confirmar tu contraseña para aprobar y firmar la OT.</div>
+                </div>
+                <div class="form-actions">
+                    <div id="aprobarOTMsg" class="status hidden"></div>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('modalAprobarOT')">Cancelar</button>
+                    <button type="submit" class="btn btn-success">Aprobar y Firmar</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
-        // Manejo de formularios
-        document.getElementById('formNuevoIngreso').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const patente = document.getElementById('patente').value;
-            alert(`Vehículo ${patente} ingresado exitosamente`);
-            closeModal('modalNuevoIngreso');
-            this.reset();
-        });
-
-        document.getElementById('formReasignar').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const id = document.getElementById('vehiculoId').value;
-            const nuevoMecanico = document.getElementById('nuevoMecanico').value;
-
-            const vehiculo = document.querySelector(`tr[data-id="${id}"]`);
-            vehiculo.cells[2].textContent = nuevoMecanico;
-
-            alert(`Mecánico reasignado exitosamente a ${nuevoMecanico}`);
-            closeModal('modalReasignar');
-            this.reset();
-        });
-
-        // Cerrar modal al hacer clic fuera
-        window.onclick = function(event) {
-            if (event.target.classList.contains('modal')) {
-                event.target.style.display = 'none';
-            }
-        }
-    </script>
+    <script src="assets/js/auth.js"></script>
+    <script src="assets/js/logout_button.js"></script>
+    <script src="assets/js/offline-handler.js"></script>
+    <script src="assets/js/file-utils.js"></script>
+    <script src="assets/js/validations.js"></script>
+    <script src="assets/js/filters-search.js"></script>
+    <script src="assets/js/error-handler.js"></script>
+    <script src="assets/js/loading-utils.js"></script>
+    <script src="assets/js/notifications-manager.js"></script>
+    <script src="assets/js/pagination.js"></script>
+    <script src="assets/js/history-viewer.js"></script>
+    <script src="assets/js/reports-viewer.js"></script>
+    <script src="assets/js/vehicles-viewer.js"></script>
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js" crossorigin="anonymous"></script>
+    <script src="assets/js/jefe_taller_dashboard.js" defer></script>
 </body>
 
 </html>
